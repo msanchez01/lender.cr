@@ -23,7 +23,8 @@ services:
       dockerfile: Dockerfile
     environment:
       DATABASE_URL: postgresql://lendercr:lendercr@db:5432/lendercr
-      CORS_ORIGINS: http://localhost:3000,http://frontend:3000,http://localhost:3001,http://frontend-admin:3001
+      CORS_ORIGINS: http://localhost:3000,http://localhost:3002,http://localhost:3003,http://frontend:3000,http://frontend-admin:3001
+      API_KEY: ${API_KEY:-local-dev-api-key}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:-local-dev-jwt-secret}
       ADMIN_USER_EMAIL: ${ADMIN_USER_EMAIL:-admin@lender.cr}
       ADMIN_USER_PASSWORD: ${ADMIN_USER_PASSWORD:-change-me}
@@ -62,22 +63,21 @@ services:
       - "3002:3000"
     command: npm run dev
 
-  # frontend-admin:
-  #   build:
-  #     context: ./frontend-admin
-  #     dockerfile: Dockerfile
-  #   environment:
-  #     API_URL: http://backend:8000
-  #     NEXT_PUBLIC_API_URL: http://localhost:8000
-  #     NEXTAUTH_URL: http://localhost:3001
-  #     NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-change-me-admin-secret}
-  #   volumes:
-  #     - ./frontend-admin:/app
-  #     - /app/node_modules
-  #     - /app/.next
-  #   ports:
-  #     - "3001:3001"
-  #   command: npm run dev
+  frontend-admin:
+    build:
+      context: ./frontend-admin
+      dockerfile: Dockerfile
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8001
+      NEXT_PUBLIC_API_KEY: ${API_KEY:-local-dev-api-key}
+      NEXT_PUBLIC_SITE_URL: http://localhost:3002
+    volumes:
+      - ./frontend-admin:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - "3003:3001"
+    command: npm run dev
 
   # prefect-server:
   #   image: prefecthq/prefect:3-python3.12

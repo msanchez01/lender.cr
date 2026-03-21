@@ -217,7 +217,12 @@
   "BlogPage": {
     "pageTitle": "Blog",
     "pageDescription": "Insights on private lending, real estate investing, and the Costa Rica property market.",
-    "comingSoonTitle": "Coming Soon",
-    "comingSoonDescription": "We're working on educational content about private lending in Costa Rica. Check back soon for articles on hard money loans, LTV ratios, investor guides, and market insights."
+    "noPosts": "No articles yet. Check back soon!",
+    "publishedOn": "Published on",
+    "by": "by",
+    "backToBlog": "Back to Blog",
+    "readMore": "Read more",
+    "breadcrumbHome": "Home",
+    "breadcrumbBlog": "Blog"
   }
 }

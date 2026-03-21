@@ -36,4 +36,12 @@ export const contactApi = {
   },
 }
 
+// --- Blog API ---
+
+export const blogApi = {
+  incrementViewCount: async (slug: string): Promise<void> => {
+    await api.post(`/blog/${slug}/view`)
+  },
+}
+
 export default api

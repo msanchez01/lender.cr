@@ -217,7 +217,12 @@
   "BlogPage": {
     "pageTitle": "Blog",
     "pageDescription": "Información sobre préstamos privados, inversión inmobiliaria y el mercado de propiedades en Costa Rica.",
-    "comingSoonTitle": "Próximamente",
-    "comingSoonDescription": "Estamos trabajando en contenido educativo sobre préstamos privados en Costa Rica. Vuelva pronto para artículos sobre préstamos con garantía, relaciones LTV, guías para inversionistas e información del mercado."
+    "noPosts": "Aún no hay artículos. ¡Vuelva pronto!",
+    "publishedOn": "Publicado el",
+    "by": "por",
+    "backToBlog": "Volver al Blog",
+    "readMore": "Leer más",
+    "breadcrumbHome": "Inicio",
+    "breadcrumbBlog": "Blog"
   }
 }

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { routing } from '@/i18n/routing'
 import { LOCATION_SLUGS } from '@/lib/data/locations'
+import { getBlogPosts } from '@/lib/api'
 
 const locales = routing.locales
 
@@ -43,7 +44,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     localizedEntry(siteUrl, `/hard-money-loans/${slug}`, { changeFrequency: 'monthly', priority: 0.7 })
   )
 
-  // Dynamic blog pages will be added here once the blog API is available
+  // Dynamic blog pages
+  const blogPages: MetadataRoute.Sitemap = []
+  try {
+    const blogData = await getBlogPosts({ page_size: 100 })
+    for (const post of blogData.items) {
+      blogPages.push(
+        localizedEntry(siteUrl, `/blog/${post.slug}`, {
+          lastModified: new Date(post.updated_at),
+          changeFrequency: 'monthly',
+          priority: 0.7,
+        })
+      )
+    }
+  } catch {
+    // API unavailable — skip blog entries
+  }
 
-  return [...staticPages, ...locationPages]
+  return [...staticPages, ...locationPages, ...blogPages]
 }

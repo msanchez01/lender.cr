@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
-import { BookOpen, ArrowLeft } from 'lucide-react'
-import { Link } from '@/i18n/navigation'
+import { BookOpen } from 'lucide-react'
+import { getBlogPosts } from '@/lib/api'
+import BlogPostCard from '@/components/BlogPostCard'
 
 type Props = { params: Promise<{ locale: string }> }
 
@@ -28,20 +29,38 @@ export default async function BlogPage({ params }: Props) {
   setRequestLocale(locale)
   const t = await getTranslations('BlogPage')
 
+  let blogData = null
+  try {
+    blogData = await getBlogPosts({ page_size: 50 })
+  } catch {
+    // API unavailable — show empty state
+  }
+
   return (
-    <div className="max-w-4xl mx-auto text-center py-16">
-      <div className="w-16 h-16 rounded-full bg-primary-50 flex items-center justify-center mx-auto mb-6">
-        <BookOpen className="h-7 w-7 text-primary-600" />
+    <div className="max-w-5xl mx-auto">
+      <div className="text-center mb-10">
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+          {t('pageTitle')}
+        </h1>
+        <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+          {t('pageDescription')}
+        </p>
       </div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-3">{t('comingSoonTitle')}</h1>
-      <p className="text-gray-500 max-w-lg mx-auto mb-8">{t('comingSoonDescription')}</p>
-      <Link
-        href="/"
-        className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium text-sm"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        {t('pageTitle')}
-      </Link>
+
+      {blogData && blogData.items.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {blogData.items.map((post) => (
+            <BlogPostCard key={post.id} post={post} />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-16">
+          <div className="w-16 h-16 rounded-full bg-primary-50 flex items-center justify-center mx-auto mb-4">
+            <BookOpen className="h-7 w-7 text-primary-600" />
+          </div>
+          <p className="text-gray-500">{t('noPosts')}</p>
+        </div>
+      )}
     </div>
   )
 }

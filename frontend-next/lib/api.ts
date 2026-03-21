@@ -26,13 +26,13 @@ export async function getBlogPosts(
       params.append(key, String(value))
     }
   })
-  return fetchApi(`/public/blog?${params.toString()}`, {
+  return fetchApi(`/blog/?${params.toString()}`, {
     next: { revalidate: 300 },
   })
 }
 
 export async function getBlogPost(slug: string): Promise<BlogPost> {
-  return fetchApi(`/public/blog/${slug}`, {
+  return fetchApi(`/blog/${slug}`, {
     next: { revalidate: 300 },
   })
 }
@@ -47,7 +47,7 @@ export interface BlogPost {
   content: string
   featured_image: string | null
   category: string | null
-  tags: string[]
+  tags: string | null
   author: string | null
   seo_title: string | null
   seo_description: string | null
