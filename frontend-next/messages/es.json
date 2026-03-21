@@ -1,0 +1,74 @@
+{
+  "Metadata": {
+    "title": "Lender.cr — Préstamos Privados para Bienes Raíces en Costa Rica",
+    "description": "Conéctese con inversionistas privados para préstamos respaldados por bienes raíces en Costa Rica. Obtenga capital en días, no meses — con comisiones más bajas que los corredores tradicionales."
+  },
+  "Common": {
+    "allRightsReserved": "Todos los derechos reservados.",
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "learnMore": "Más información",
+    "getStarted": "Comenzar"
+  },
+  "Navigation": {
+    "home": "Inicio",
+    "howItWorks": "Cómo Funciona",
+    "calculator": "Calculadora",
+    "blog": "Blog",
+    "contact": "Contacto",
+    "login": "Iniciar Sesión",
+    "forBorrowers": "Para Prestatarios",
+    "forInvestors": "Para Inversionistas"
+  },
+  "HomePage": {
+    "heroTitle": "Préstamos Privados con Garantía Inmobiliaria, Simplificados",
+    "heroSubtitle": "Obtenga capital con su propiedad en Costa Rica en días — o gane 12-16% anual en préstamos respaldados por activos.",
+    "borrowerCta": "Necesito un Préstamo",
+    "investorCta": "Quiero Invertir",
+    "howItWorksTitle": "Cómo Funciona",
+    "borrowerTitle": "Para Propietarios",
+    "borrowerDescription": "Obtenga capital con su propiedad en Costa Rica en días, no meses — a la mitad del costo de los corredores tradicionales.",
+    "investorTitle": "Para Inversionistas",
+    "investorDescription": "Explore oportunidades de préstamo respaldadas por activos que generan 12-16% anual con total transparencia.",
+    "step1Title": "Envíe Su Propiedad",
+    "step1Description": "Cuéntenos sobre su propiedad y cuánto capital necesita.",
+    "step2Title": "Obtenga Aprobación",
+    "step2Description": "Calculamos su relación préstamo-valor y coordinamos un avalúo independiente.",
+    "step3Title": "Reciba Fondos",
+    "step3Description": "Un inversionista financia su préstamo. Reciba capital en 7-14 días.",
+    "whyTitle": "¿Por Qué Lender.cr?",
+    "lowerFees": "Menores Comisiones",
+    "lowerFeesDescription": "4-5% de apertura vs. 8% en corredores tradicionales.",
+    "faster": "Más Rápido",
+    "fasterDescription": "Cierre en 7-14 días, no en 3-6 meses.",
+    "transparent": "Transparente",
+    "transparentDescription": "Visibilidad total del acuerdo para prestatarios e inversionistas.",
+    "bilingual": "Bilingüe",
+    "bilingualDescription": "Soporte completo en inglés y español desde el primer día."
+  },
+  "LanguageSwitcher": {
+    "en": "EN",
+    "es": "ES",
+    "english": "English",
+    "spanish": "Español"
+  },
+  "Footer": {
+    "description": "Mercado de préstamos privados con garantía inmobiliaria en Costa Rica.",
+    "borrowers": "Prestatarios",
+    "investors": "Inversionistas",
+    "company": "Empresa",
+    "about": "Nosotros",
+    "contact": "Contacto",
+    "blog": "Blog",
+    "howItWorks": "Cómo Funciona",
+    "calculator": "Calculadora LTV",
+    "applyForLoan": "Solicitar Préstamo",
+    "browseDeals": "Ver Oportunidades",
+    "investorDashboard": "Panel de Inversionista"
+  },
+  "NotFound": {
+    "title": "Página No Encontrada",
+    "description": "La página que busca no existe.",
+    "backHome": "Volver al Inicio"
+  }
+}

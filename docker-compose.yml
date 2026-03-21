@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: lendercr
+      POSTGRES_PASSWORD: lendercr
+      POSTGRES_DB: lendercr
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lendercr -d lendercr"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://lendercr:lendercr@db:5432/lendercr
+      CORS_ORIGINS: http://localhost:3000,http://frontend:3000,http://localhost:3001,http://frontend-admin:3001
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-local-dev-jwt-secret}
+      ADMIN_USER_EMAIL: ${ADMIN_USER_EMAIL:-admin@lender.cr}
+      ADMIN_USER_PASSWORD: ${ADMIN_USER_PASSWORD:-change-me}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-}
+      R2_ACCOUNT_ID: ${R2_ACCOUNT_ID:-}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-}
+      R2_BUCKET_NAME: ${R2_BUCKET_NAME:-lendercr}
+      R2_PUBLIC_URL: ${R2_PUBLIC_URL:-}
+      ENVIRONMENT: development
+    volumes:
+      - ./backend:/app
+      - /app/__pycache__
+    ports:
+      - "8001:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    build:
+      context: ./frontend-next
+      dockerfile: Dockerfile
+    environment:
+      API_URL: http://backend:8000
+      NEXT_PUBLIC_API_URL: http://localhost:8001
+      NEXT_PUBLIC_SITE_URL: http://localhost:3002
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-}
+    volumes:
+      - ./frontend-next:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - "3002:3000"
+    command: npm run dev
+
+  # frontend-admin:
+  #   build:
+  #     context: ./frontend-admin
+  #     dockerfile: Dockerfile
+  #   environment:
+  #     API_URL: http://backend:8000
+  #     NEXT_PUBLIC_API_URL: http://localhost:8000
+  #     NEXTAUTH_URL: http://localhost:3001
+  #     NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-change-me-admin-secret}
+  #   volumes:
+  #     - ./frontend-admin:/app
+  #     - /app/node_modules
+  #     - /app/.next
+  #   ports:
+  #     - "3001:3001"
+  #   command: npm run dev
+
+  # prefect-server:
+  #   image: prefecthq/prefect:3-python3.12
+  #   command: prefect server start --host 0.0.0.0
+  #   ports:
+  #     - "4200:4200"
+  #   volumes:
+  #     - prefect_data:/root/.prefect
+
+volumes:
+  postgres_data:
+  # prefect_data:

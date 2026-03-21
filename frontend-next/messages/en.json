@@ -1,0 +1,74 @@
+{
+  "Metadata": {
+    "title": "Lender.cr — Private Lending for Costa Rica Real Estate",
+    "description": "Connect with private investors for asset-backed real estate loans in Costa Rica. Get capital in days, not months — at lower fees than traditional brokers."
+  },
+  "Common": {
+    "allRightsReserved": "All rights reserved.",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "learnMore": "Learn more",
+    "getStarted": "Get Started"
+  },
+  "Navigation": {
+    "home": "Home",
+    "howItWorks": "How It Works",
+    "calculator": "Calculator",
+    "blog": "Blog",
+    "contact": "Contact",
+    "login": "Log In",
+    "forBorrowers": "For Borrowers",
+    "forInvestors": "For Investors"
+  },
+  "HomePage": {
+    "heroTitle": "Private Real Estate Lending, Made Simple",
+    "heroSubtitle": "Get capital against your Costa Rica property in days — or earn 12-16% annual returns on asset-backed loans.",
+    "borrowerCta": "I Need a Loan",
+    "investorCta": "I Want to Invest",
+    "howItWorksTitle": "How It Works",
+    "borrowerTitle": "For Property Owners",
+    "borrowerDescription": "Get capital against your Costa Rica property in days, not months — at half the cost of traditional brokers.",
+    "investorTitle": "For Investors",
+    "investorDescription": "Browse vetted, asset-backed lending opportunities earning 12-16% annually with full transparency.",
+    "step1Title": "Submit Your Property",
+    "step1Description": "Tell us about your property and how much capital you need.",
+    "step2Title": "Get Approved",
+    "step2Description": "We calculate your LTV ratio and coordinate an independent appraisal.",
+    "step3Title": "Get Funded",
+    "step3Description": "An investor funds your loan. Receive capital within 7-14 days.",
+    "whyTitle": "Why Lender.cr?",
+    "lowerFees": "Lower Fees",
+    "lowerFeesDescription": "4-5% origination vs. 8% at traditional brokers.",
+    "faster": "Faster",
+    "fasterDescription": "Close in 7-14 days, not 3-6 months.",
+    "transparent": "Transparent",
+    "transparentDescription": "Full deal visibility for both borrowers and investors.",
+    "bilingual": "Bilingual",
+    "bilingualDescription": "Full English and Spanish support from day one."
+  },
+  "LanguageSwitcher": {
+    "en": "EN",
+    "es": "ES",
+    "english": "English",
+    "spanish": "Español"
+  },
+  "Footer": {
+    "description": "Private real estate lending marketplace for Costa Rica.",
+    "borrowers": "Borrowers",
+    "investors": "Investors",
+    "company": "Company",
+    "about": "About Us",
+    "contact": "Contact",
+    "blog": "Blog",
+    "howItWorks": "How It Works",
+    "calculator": "LTV Calculator",
+    "applyForLoan": "Apply for a Loan",
+    "browseDeals": "Browse Deals",
+    "investorDashboard": "Investor Dashboard"
+  },
+  "NotFound": {
+    "title": "Page Not Found",
+    "description": "The page you're looking for doesn't exist.",
+    "backHome": "Back to Home"
+  }
+}
