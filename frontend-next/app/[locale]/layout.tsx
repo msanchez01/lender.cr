@@ -4,6 +4,7 @@ import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { NextIntlClientProvider } from 'next-intl'
 import { routing, type Locale } from '@/i18n/routing'
 import Navigation from '@/components/Navigation'
+import AuthProvider from '@/components/AuthProvider'
 import AnalyticsEvents from '@/components/AnalyticsEvents'
 
 type Props = {
@@ -69,6 +70,7 @@ export default async function LocaleLayout({ children, params }: Props) {
     <html lang={locale}>
       <body>
         <NextIntlClientProvider>
+          <AuthProvider>
           <div className="min-h-screen bg-gray-50 flex flex-col">
             <Navigation />
             <main className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 md:py-8 flex-1">
@@ -83,6 +85,7 @@ export default async function LocaleLayout({ children, params }: Props) {
             </footer>
           </div>
           <AnalyticsEvents />
+          </AuthProvider>
         </NextIntlClientProvider>
       </body>
     </html>

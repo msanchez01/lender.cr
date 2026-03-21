@@ -15,9 +15,38 @@ from app.core.database import Base, engine
 limiter = Limiter(key_func=get_remote_address)
 
 
+def seed_admin_user():
+    """Create admin user on startup if configured and doesn't exist."""
+    if not settings.ADMIN_USER_EMAIL or not settings.ADMIN_USER_PASSWORD:
+        return
+
+    from app.core.database import SessionLocal
+    from app.core.security import hash_password
+    from app.models.user import User, UserRole, UserStatus
+
+    db = SessionLocal()
+    try:
+        existing = db.query(User).filter(User.email == settings.ADMIN_USER_EMAIL).first()
+        if not existing:
+            admin = User(
+                email=settings.ADMIN_USER_EMAIL,
+                password_hash=hash_password(settings.ADMIN_USER_PASSWORD),
+                role=UserRole.ADMIN,
+                status=UserStatus.ACTIVE,
+                first_name="Admin",
+                last_name="User",
+                email_verified=True,
+            )
+            db.add(admin)
+            db.commit()
+    finally:
+        db.close()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
+    seed_admin_user()
     yield
 
 

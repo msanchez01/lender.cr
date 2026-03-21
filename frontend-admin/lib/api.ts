@@ -7,7 +7,7 @@ const api = axios.create({
   baseURL: `${API_URL}/api/v1`,
   headers: {
     'Content-Type': 'application/json',
-    'X-API-Key': API_KEY,
+    ...(API_KEY && { 'X-API-Key': API_KEY }),
   },
 })
 
