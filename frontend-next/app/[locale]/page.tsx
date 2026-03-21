@@ -1,6 +1,7 @@
 import { ArrowRight, Shield, Clock, Eye, Globe } from 'lucide-react'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import JsonLd from '@/components/JsonLd'
+import LtvCalculator from '@/components/LtvCalculator'
 import { Link } from '@/i18n/navigation'
 
 type Props = {
@@ -104,6 +105,17 @@ export default async function HomePage({ params }: Props) {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* LTV Calculator */}
+      <div className="mb-12">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">
+          {t('calculatorTitle')}
+        </h2>
+        <p className="text-sm text-gray-500 text-center mb-6">
+          {t('calculatorSubtitle')}
+        </p>
+        <LtvCalculator compact />
       </div>
 
       {/* Why Lender.cr */}

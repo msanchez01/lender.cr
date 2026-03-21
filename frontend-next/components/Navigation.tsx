@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Link, usePathname } from '@/i18n/navigation'
-import { Home, BookOpen, Calculator, Mail, LogIn, Menu, X } from 'lucide-react'
+import { Home, BookOpen, Calculator, Mail, LogIn, Menu, X, Info } from 'lucide-react'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 export default function Navigation() {
@@ -22,6 +22,7 @@ export default function Navigation() {
 
   const navLinks = [
     { href: '/', label: t('home'), icon: Home },
+    { href: '/how-it-works/borrowers', label: t('howItWorks'), icon: Info },
     { href: '/calculator', label: t('calculator'), icon: Calculator },
     { href: '/blog', label: t('blog'), icon: BookOpen },
     { href: '/contact', label: t('contact'), icon: Mail },

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { routing } from '@/i18n/routing'
+import { LOCATION_SLUGS } from '@/lib/data/locations'
 
 const locales = routing.locales
 
@@ -37,7 +38,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     localizedEntry(siteUrl, '/contact', { changeFrequency: 'monthly', priority: 0.6 }),
   ]
 
+  // Location landing pages
+  const locationPages: MetadataRoute.Sitemap = LOCATION_SLUGS.map((slug) =>
+    localizedEntry(siteUrl, `/hard-money-loans/${slug}`, { changeFrequency: 'monthly', priority: 0.7 })
+  )
+
   // Dynamic blog pages will be added here once the blog API is available
 
-  return staticPages
+  return [...staticPages, ...locationPages]
 }
