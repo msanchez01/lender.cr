@@ -2,7 +2,7 @@
 
 interface StatusBadgeProps {
   status: string
-  type?: 'application' | 'interest' | 'user'
+  type?: 'application' | 'interest' | 'user' | 'deal' | 'payment'
 }
 
 const applicationColors: Record<string, string> = {
@@ -33,9 +33,28 @@ const userColors: Record<string, string> = {
   suspended: 'bg-red-100 text-red-700',
 }
 
+const dealColors: Record<string, string> = {
+  pending_legal: 'bg-gray-100 text-gray-700',
+  active: 'bg-green-100 text-green-700',
+  current: 'bg-green-100 text-green-700',
+  late: 'bg-yellow-100 text-yellow-700',
+  default: 'bg-red-100 text-red-700',
+  paid_off: 'bg-emerald-100 text-emerald-700',
+}
+
+const paymentColors: Record<string, string> = {
+  scheduled: 'bg-gray-100 text-gray-700',
+  pending: 'bg-blue-100 text-blue-700',
+  paid: 'bg-green-100 text-green-700',
+  late: 'bg-yellow-100 text-yellow-700',
+  missed: 'bg-red-100 text-red-700',
+}
+
 function getColorClasses(status: string, type?: string): string {
   if (type === 'interest') return interestColors[status] || 'bg-gray-100 text-gray-700'
   if (type === 'user') return userColors[status] || 'bg-gray-100 text-gray-700'
+  if (type === 'deal') return dealColors[status] || 'bg-gray-100 text-gray-700'
+  if (type === 'payment') return paymentColors[status] || 'bg-gray-100 text-gray-700'
   return applicationColors[status] || 'bg-gray-100 text-gray-700'
 }
 

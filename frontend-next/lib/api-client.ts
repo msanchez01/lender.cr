@@ -158,6 +158,43 @@ export const investorApi = {
     const { data } = await api.get('/investor/portfolio/interests', { headers: authHeaders() })
     return data
   },
+
+  // Funded deals
+  listFundedDeals: async () => {
+    const { data } = await api.get('/investor/deals', { headers: authHeaders() })
+    return data
+  },
+  getFundedDeal: async (id: string) => {
+    const { data } = await api.get(`/investor/deals/${id}`, { headers: authHeaders() })
+    return data
+  },
+}
+
+// --- Deal API (borrower) ---
+
+export const dealApi = {
+  listDeals: async () => {
+    const { data } = await api.get('/borrower/deals', { headers: authHeaders() })
+    return data
+  },
+  getDeal: async (id: string) => {
+    const { data } = await api.get(`/borrower/deals/${id}`, { headers: authHeaders() })
+    return data
+  },
+  downloadAgreement: async (id: string) => {
+    const response = await api.get(`/borrower/deals/${id}/agreement`, {
+      headers: authHeaders(),
+      responseType: 'blob',
+    })
+    return response.data
+  },
+  downloadSchedule: async (id: string) => {
+    const response = await api.get(`/borrower/deals/${id}/schedule`, {
+      headers: authHeaders(),
+      responseType: 'blob',
+    })
+    return response.data
+  },
 }
 
 export default api

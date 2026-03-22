@@ -6,6 +6,7 @@ import {
   BookOpen,
   FileCheck,
   FileText,
+  Handshake,
   Heart,
   LayoutDashboard,
   Users,
@@ -14,6 +15,7 @@ import {
 const navItems = [
   { label: 'Dashboard', href: '/', icon: LayoutDashboard },
   { label: 'Applications', href: '/applications', icon: FileText },
+  { label: 'Deals', href: '/deals', icon: Handshake },
   { label: 'Users', href: '/users', icon: Users },
   { label: 'Documents', href: '/documents', icon: FileCheck },
   { label: 'Interests', href: '/interests', icon: Heart },
