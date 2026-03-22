@@ -22,7 +22,7 @@ export async function getBlogPosts(
 ): Promise<{ items: BlogPost[]; total: number; page: number; page_size: number }> {
   const params = new URLSearchParams()
   Object.entries(filters).forEach(([key, value]) => {
-    if (value !== undefined && value !== '' && value !== null) {
+    if (value !== undefined && value !== null) {
       params.append(key, String(value))
     }
   })
