@@ -52,24 +52,35 @@ jobs:
       - name: Print Deploy URL
         run: echo "Deployed to ${{ steps.deploy.outputs.url }}"
 
-  # deploy-admin:
-  #   name: Deploy Admin to Vercel
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  #     VERCEL_PROJECT_ID: ${{ secrets.VERCEL_ADMIN_PROJECT_ID }}
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-  #     - name: Setup Node.js
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 22
-  #     - name: Install Vercel CLI
-  #       run: npm install -g vercel
-  #     - name: Pull Vercel Environment
-  #       run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-  #     - name: Build with Vercel
-  #       run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-  #     - name: Deploy to Vercel
-  #       run: vercel deploy --prebuilt --prod --force --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}
+  deploy-admin:
+    name: Deploy Admin to Vercel
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_ADMIN_PROJECT_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      - name: Pull Vercel Environment
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build with Vercel
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to Vercel
+        id: deploy
+        run: |
+          url=$(vercel deploy --prebuilt --prod --force --archive=tgz --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+
+      - name: Print Deploy URL
+        run: echo "Admin deployed to ${{ steps.deploy.outputs.url }}"

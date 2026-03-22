@@ -34,6 +34,35 @@ lender.cr/
 └── docker-compose.yml
 ```
 
+## Production Infrastructure
+
+### DigitalOcean
+- **Droplet:** `lendercr-prod` (ID: 560154478) — s-1vcpu-2gb, Ubuntu 24.04, nyc1
+  - IP: `159.203.183.240`
+  - SSH: `ssh deploy@159.203.183.240`
+  - App dir: `/opt/lendercr/`
+  - Deploy script: `/opt/lendercr/deploy/scripts/deploy.sh`
+  - Production compose: `/opt/lendercr/docker-compose.prod.yml`
+  - Nginx reverse proxy: api.lender.cr → localhost:8000
+- **Managed PostgreSQL:** `lendercr-db` (ID: 096fe481-a84f-45e2-9d80-a979263b2a2a) — db-s-1vcpu-1gb, PG 16, nyc1
+  - Host: `lendercr-db-do-user-7955476-0.g.db.ondigitalocean.com:25060`
+  - Database: `lendercr`
+  - Firewall: restricted to droplet only
+
+### Cloudflare (DNS)
+- Zone: `lender.cr` (Zone ID: cd5d1c5c6822d7a85f9e1b107437f22b)
+- DNS records managed via Cloudflare dashboard or API
+
+### Vercel
+- **Frontend:** project `lender-cr` (ID: prj_9aLWrM0hjbCruqrKqyw1RvVNJBHg) → lender.cr
+- **Admin:** project `lendercr-admin` (ID: prj_fjBTwj5rdahNnUGojKFGieopd6SC) → admin.lender.cr
+- Org/Team: team_mp0mhphfsaUKyjk1ANfoAMLE
+- Token file: `/Users/msanchez/Workspaces/Mau/lender.cr/token_vercel`
+
+### GitHub (CI/CD)
+- Repo: msanchez01/lender.cr
+- Secrets configured: DROPLET_IP, DEPLOY_SSH_KEY, VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID, VERCEL_ADMIN_PROJECT_ID
+
 ## Conventions
 
 ### Python (Backend)
