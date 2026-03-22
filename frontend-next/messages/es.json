@@ -286,7 +286,9 @@
     "sidebarMarketplace": "Mercado",
     "sidebarPortfolio": "Portafolio",
     "sidebarReturns": "Rendimientos",
-    "sidebarSettings": "Configuración"
+    "sidebarSettings": "Configuración",
+    "recentInterests": "Actividad Reciente",
+    "viewAll": "Ver todo"
   },
   "SettingsPage": {
     "pageTitle": "Configuración",
@@ -300,7 +302,18 @@
     "saving": "Guardando...",
     "saved": "¡Cambios guardados!",
     "changePasswordButton": "Cambiar Contraseña",
-    "changing": "Cambiando..."
+    "changing": "Cambiando...",
+    "investmentPreferences": "Preferencias de Inversión",
+    "minInvestmentUsd": "Inversión Mín. (USD)",
+    "maxInvestmentUsd": "Inversión Máx. (USD)",
+    "preferredLtvMax": "LTV Máximo Preferido (%)",
+    "preferredTermMin": "Plazo Mín. (meses)",
+    "preferredTermMax": "Plazo Máx. (meses)",
+    "preferredRegions": "Regiones Preferidas",
+    "preferredRegionsPlaceholder": "ej. Escazú, Santa Ana, Guanacaste",
+    "taxCountry": "País Fiscal",
+    "taxId": "ID Fiscal",
+    "savePreferences": "Guardar Preferencias"
   },
   "PropertiesPage": {
     "title": "Mis Propiedades",
@@ -405,5 +418,78 @@
     "editApplication": "Editar",
     "withdrawApplication": "Retirar",
     "backToApplications": "Volver a Solicitudes"
+  },
+  "MarketplacePage": {
+    "title": "Mercado de Inversión",
+    "description": "Explore oportunidades de préstamo verificadas y respaldadas por activos.",
+    "noDeals": "No hay oportunidades disponibles en este momento. ¡Vuelva pronto!",
+    "filters": "Filtros",
+    "minAmount": "Monto Mín.",
+    "maxAmount": "Monto Máx.",
+    "maxLtv": "LTV Máx. %",
+    "propertyType": "Tipo de Propiedad",
+    "province": "Provincia",
+    "clearFilters": "Limpiar Filtros",
+    "dealAmount": "Monto del Préstamo",
+    "dealLtv": "LTV",
+    "dealTerm": "Plazo",
+    "dealPurpose": "Propósito",
+    "months": "meses",
+    "interestCount": "inversionistas interesados",
+    "viewDeal": "Ver Oportunidad",
+    "expressInterest": "Expresar Interés",
+    "alreadyExpressed": "Interés Expresado",
+    "interestForm": {
+      "title": "Exprese Su Interés",
+      "amountLabel": "Monto Dispuesto a Financiar (USD)",
+      "rateLabel": "Tasa Mensual Propuesta (%)",
+      "messageLabel": "Mensaje (opcional)",
+      "messagePlaceholder": "Cuéntenos sobre su interés...",
+      "submitButton": "Enviar Interés",
+      "submitting": "Enviando...",
+      "success": "¡Interés enviado exitosamente!",
+      "error": "Error al enviar interés."
+    },
+    "dealDetail": {
+      "propertyInfo": "Información de la Propiedad",
+      "loanTerms": "Términos del Préstamo",
+      "type": "Tipo",
+      "location": "Ubicación",
+      "estimatedValue": "Valor Estimado",
+      "appraisedValue": "Valor de Avalúo",
+      "lotSize": "Tamaño del Lote",
+      "builtArea": "Área Construida",
+      "yearBuilt": "Año de Construcción",
+      "backToMarketplace": "Volver al Mercado"
+    }
+  },
+  "PortfolioPage": {
+    "title": "Portafolio",
+    "totalInvested": "Total Invertido",
+    "activeDeals": "Operaciones Activas",
+    "interestsExpressed": "Intereses Expresados",
+    "interestsCommitted": "Comprometidos",
+    "totalEarned": "Total Ganado",
+    "avgReturn": "Rendimiento Anual Prom.",
+    "noActivity": "Aún no hay actividad de inversión.",
+    "startInvesting": "Explore el mercado para encontrar su primera oportunidad.",
+    "browseMarketplace": "Explorar Mercado",
+    "myInterests": "Mis Intereses",
+    "interestStatuses": {
+      "expressed": "Expresado",
+      "reviewing": "En Revisión",
+      "committed": "Comprometido",
+      "withdrawn": "Retirado",
+      "declined": "Rechazado"
+    }
+  },
+  "ReturnsPage": {
+    "title": "Rendimientos",
+    "description": "Rastree sus rendimientos y desempeño de inversión.",
+    "noReturns": "Los rendimientos se calcularán una vez que tenga operaciones financiadas.",
+    "monthlyIncome": "Ingreso Mensual",
+    "totalEarned": "Total Ganado",
+    "avgAnnualReturn": "Rendimiento Anual Prom.",
+    "browseDeals": "Explorar Oportunidades"
   }
 }

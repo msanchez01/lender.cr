@@ -124,4 +124,40 @@ export const borrowerApi = {
   },
 }
 
+// --- Investor API ---
+
+import type { MarketplaceDeal, MarketplaceDealList, InvestorInterest, InvestorInterestWithDeal, PortfolioSummary } from '@/lib/types'
+
+export const investorApi = {
+  // Marketplace
+  listDeals: async (filters?: Record<string, string | number>): Promise<MarketplaceDealList> => {
+    const params = new URLSearchParams()
+    if (filters) {
+      Object.entries(filters).forEach(([k, v]) => {
+        if (v !== undefined && v !== '' && v !== null) params.append(k, String(v))
+      })
+    }
+    const { data } = await api.get(`/investor/marketplace?${params.toString()}`, { headers: authHeaders() })
+    return data
+  },
+  getDeal: async (id: string): Promise<MarketplaceDeal> => {
+    const { data } = await api.get(`/investor/marketplace/${id}`, { headers: authHeaders() })
+    return data
+  },
+  expressInterest: async (appId: string, interestData: Record<string, unknown>): Promise<InvestorInterest> => {
+    const { data } = await api.post(`/investor/marketplace/${appId}/interest`, interestData, { headers: authHeaders() })
+    return data
+  },
+
+  // Portfolio
+  getPortfolio: async (): Promise<PortfolioSummary> => {
+    const { data } = await api.get('/investor/portfolio', { headers: authHeaders() })
+    return data
+  },
+  listInterests: async (): Promise<InvestorInterestWithDeal[]> => {
+    const { data } = await api.get('/investor/portfolio/interests', { headers: authHeaders() })
+    return data
+  },
+}
+
 export default api

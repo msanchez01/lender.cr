@@ -6,4 +6,5 @@ from app.models.property import (  # noqa: F401
     PropertyDocument,
     PropertyImage,
 )
+from app.models.investor import InvestorInterest  # noqa: F401
 from app.models.user import BorrowerProfile, InvestorProfile, User  # noqa: F401

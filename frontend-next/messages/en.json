@@ -286,7 +286,9 @@
     "sidebarMarketplace": "Marketplace",
     "sidebarPortfolio": "Portfolio",
     "sidebarReturns": "Returns",
-    "sidebarSettings": "Settings"
+    "sidebarSettings": "Settings",
+    "recentInterests": "Recent Activity",
+    "viewAll": "View all"
   },
   "SettingsPage": {
     "pageTitle": "Settings",
@@ -300,7 +302,18 @@
     "saving": "Saving...",
     "saved": "Changes saved!",
     "changePasswordButton": "Change Password",
-    "changing": "Changing..."
+    "changing": "Changing...",
+    "investmentPreferences": "Investment Preferences",
+    "minInvestmentUsd": "Min Investment (USD)",
+    "maxInvestmentUsd": "Max Investment (USD)",
+    "preferredLtvMax": "Preferred Max LTV (%)",
+    "preferredTermMin": "Min Term (months)",
+    "preferredTermMax": "Max Term (months)",
+    "preferredRegions": "Preferred Regions",
+    "preferredRegionsPlaceholder": "e.g. Escazú, Santa Ana, Guanacaste",
+    "taxCountry": "Tax Country",
+    "taxId": "Tax ID",
+    "savePreferences": "Save Preferences"
   },
   "PropertiesPage": {
     "title": "My Properties",
@@ -405,5 +418,78 @@
     "editApplication": "Edit",
     "withdrawApplication": "Withdraw",
     "backToApplications": "Back to Applications"
+  },
+  "MarketplacePage": {
+    "title": "Investment Marketplace",
+    "description": "Browse vetted, asset-backed lending opportunities.",
+    "noDeals": "No deals available at the moment. Check back soon!",
+    "filters": "Filters",
+    "minAmount": "Min Amount",
+    "maxAmount": "Max Amount",
+    "maxLtv": "Max LTV %",
+    "propertyType": "Property Type",
+    "province": "Province",
+    "clearFilters": "Clear Filters",
+    "dealAmount": "Loan Amount",
+    "dealLtv": "LTV",
+    "dealTerm": "Term",
+    "dealPurpose": "Purpose",
+    "months": "months",
+    "interestCount": "investors interested",
+    "viewDeal": "View Deal",
+    "expressInterest": "Express Interest",
+    "alreadyExpressed": "Interest Expressed",
+    "interestForm": {
+      "title": "Express Your Interest",
+      "amountLabel": "Amount Willing to Fund (USD)",
+      "rateLabel": "Proposed Monthly Rate (%)",
+      "messageLabel": "Message (optional)",
+      "messagePlaceholder": "Tell us about your interest...",
+      "submitButton": "Submit Interest",
+      "submitting": "Submitting...",
+      "success": "Interest submitted successfully!",
+      "error": "Failed to submit interest."
+    },
+    "dealDetail": {
+      "propertyInfo": "Property Information",
+      "loanTerms": "Loan Terms",
+      "type": "Type",
+      "location": "Location",
+      "estimatedValue": "Estimated Value",
+      "appraisedValue": "Appraised Value",
+      "lotSize": "Lot Size",
+      "builtArea": "Built Area",
+      "yearBuilt": "Year Built",
+      "backToMarketplace": "Back to Marketplace"
+    }
+  },
+  "PortfolioPage": {
+    "title": "Portfolio",
+    "totalInvested": "Total Invested",
+    "activeDeals": "Active Deals",
+    "interestsExpressed": "Interests Expressed",
+    "interestsCommitted": "Committed",
+    "totalEarned": "Total Earned",
+    "avgReturn": "Avg. Annual Return",
+    "noActivity": "No investment activity yet.",
+    "startInvesting": "Browse the marketplace to find your first deal.",
+    "browseMarketplace": "Browse Marketplace",
+    "myInterests": "My Interests",
+    "interestStatuses": {
+      "expressed": "Expressed",
+      "reviewing": "Under Review",
+      "committed": "Committed",
+      "withdrawn": "Withdrawn",
+      "declined": "Declined"
+    }
+  },
+  "ReturnsPage": {
+    "title": "Returns",
+    "description": "Track your investment returns and performance.",
+    "noReturns": "Returns will be calculated once you have funded deals.",
+    "monthlyIncome": "Monthly Income",
+    "totalEarned": "Total Earned",
+    "avgAnnualReturn": "Avg. Annual Return",
+    "browseDeals": "Browse Deals"
   }
 }
