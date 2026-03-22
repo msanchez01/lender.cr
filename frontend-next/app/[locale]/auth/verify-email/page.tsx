@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useTranslations } from 'next-intl'
 import { useSearchParams } from 'next/navigation'
 import { Link } from '@/i18n/navigation'
@@ -8,6 +8,14 @@ import { CheckCircle, XCircle, Loader2 } from 'lucide-react'
 import { authVerifyEmail } from '@/lib/auth'
 
 export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={<div className="max-w-md mx-auto py-12 text-center"><Loader2 className="h-8 w-8 animate-spin text-primary-600 mx-auto" /></div>}>
+      <VerifyEmailContent />
+    </Suspense>
+  )
+}
+
+function VerifyEmailContent() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
   const t = useTranslations('AuthPage')
   const searchParams = useSearchParams()

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from '@/i18n/navigation'
 import { useSearchParams } from 'next/navigation'
@@ -20,6 +20,14 @@ const PURPOSE_OPTIONS = [
 ] as const
 
 export default function ApplyPage() {
+  return (
+    <Suspense fallback={<div className="max-w-md mx-auto py-12 text-center"><Loader2 className="h-8 w-8 animate-spin text-primary-600 mx-auto" /></div>}>
+      <ApplyForm />
+    </Suspense>
+  )
+}
+
+function ApplyForm() {
   const t = useTranslations('ApplicationsPage')
   const router = useRouter()
   const searchParams = useSearchParams()
