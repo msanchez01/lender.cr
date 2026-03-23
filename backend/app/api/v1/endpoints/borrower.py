@@ -147,6 +147,15 @@ async def get_property(
     return PropertyResponse.model_validate(prop)
 
 
+EDITABLE_APP_STATUSES = {
+    ApplicationStatus.DRAFT,
+    ApplicationStatus.SUBMITTED,
+    ApplicationStatus.UNDER_REVIEW,
+    ApplicationStatus.APPRAISAL_ORDERED,
+    ApplicationStatus.APPRAISAL_COMPLETE,
+}
+
+
 @router.put("/properties/{property_id}", response_model=PropertyResponse)
 async def update_property(
     property_id: str,
@@ -156,6 +165,22 @@ async def update_property(
 ):
     profile = _get_borrower_profile(user, db)
     prop = _get_owned_property(property_id, profile.id, db)
+
+    # Check if property has loan applications in non-editable states
+    blocking_apps = (
+        db.query(LoanApplication)
+        .filter(
+            LoanApplication.property_id == property_id,
+            LoanApplication.status.notin_(EDITABLE_APP_STATUSES),
+        )
+        .count()
+    )
+    if blocking_apps > 0:
+        raise HTTPException(
+            status_code=400,
+            detail="This property cannot be edited because it has active loan applications in a locked state.",
+        )
+
     for key, value in data.model_dump(exclude_unset=True).items():
         setattr(prop, key, value)
     db.commit()

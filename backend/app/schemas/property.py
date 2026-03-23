@@ -12,6 +12,8 @@ class PropertyCreate(BaseModel):
     address: str = Field(..., min_length=1)
     city: str | None = None
     province: str | None = None
+    district: str | None = None
+    google_maps_url: str | None = None
     gps_latitude: Decimal | None = None
     gps_longitude: Decimal | None = None
     lot_size_sqm: Decimal | None = None
@@ -29,6 +31,8 @@ class PropertyUpdate(BaseModel):
     address: str | None = None
     city: str | None = None
     province: str | None = None
+    district: str | None = None
+    google_maps_url: str | None = None
     gps_latitude: Decimal | None = None
     gps_longitude: Decimal | None = None
     lot_size_sqm: Decimal | None = None
@@ -72,6 +76,8 @@ class PropertyResponse(BaseModel):
     address: str
     city: str | None
     province: str | None
+    district: str | None
+    google_maps_url: str | None
     lot_size_sqm: Decimal | None
     built_area_sqm: Decimal | None
     year_built: int | None

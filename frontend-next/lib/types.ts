@@ -7,6 +7,8 @@ export interface Property {
   address: string
   city: string | null
   province: string | null
+  district: string | null
+  google_maps_url: string | null
   lot_size_sqm: number | null
   built_area_sqm: number | null
   year_built: number | null

@@ -22,6 +22,7 @@ export default function NewPropertyPage() {
     province: '',
     canton: '',
     district: '',
+    google_maps_url: '',
     lot_size_sqm: '',
     built_area_sqm: '',
     year_built: '',
@@ -51,7 +52,8 @@ export default function NewPropertyPage() {
 
       if (form.province) payload.province = form.province
       if (form.canton) payload.city = form.canton
-      if (form.district) payload.address = `${form.address.trim()}, ${form.district}`
+      if (form.district) payload.district = form.district
+      if (form.google_maps_url.trim()) payload.google_maps_url = form.google_maps_url.trim()
       if (form.lot_size_sqm) payload.lot_size_sqm = parseFloat(form.lot_size_sqm)
       if (form.built_area_sqm) payload.built_area_sqm = parseFloat(form.built_area_sqm)
       if (form.year_built) payload.year_built = parseInt(form.year_built, 10)
@@ -110,17 +112,6 @@ export default function NewPropertyPage() {
           </select>
         </div>
 
-        <div>
-          <label className={labelClass}>{t('addressLabel')} *</label>
-          <input
-            type="text"
-            value={form.address}
-            onChange={(e) => updateField('address', e.target.value)}
-            required
-            className={inputClass}
-          />
-        </div>
-
         <LocationSelector
           province={form.province}
           canton={form.canton}
@@ -129,6 +120,29 @@ export default function NewPropertyPage() {
           onCantonChange={(v) => updateField('canton', v)}
           onDistrictChange={(v) => updateField('district', v)}
         />
+
+        <div>
+          <label className={labelClass}>{t('exactAddressLabel')} *</label>
+          <textarea
+            value={form.address}
+            onChange={(e) => updateField('address', e.target.value)}
+            required
+            rows={2}
+            placeholder={t('exactAddressPlaceholder')}
+            className={`${inputClass} resize-none`}
+          />
+        </div>
+
+        <div>
+          <label className={labelClass}>{t('googleMapsLabel')}</label>
+          <input
+            type="url"
+            value={form.google_maps_url}
+            onChange={(e) => updateField('google_maps_url', e.target.value)}
+            placeholder={t('googleMapsPlaceholder')}
+            className={inputClass}
+          />
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>

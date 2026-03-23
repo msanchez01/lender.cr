@@ -73,9 +73,11 @@ class Property(Base):
     borrower_id = Column(UUID(as_uuid=True), ForeignKey("borrower_profiles.id"))
     ticaluxury_property_id = Column(UUID(as_uuid=True), nullable=True)
     property_type = Column(Enum(PropertyType), nullable=False)
-    address = Column(Text, nullable=False)
-    city = Column(String(100))
-    province = Column(String(100))
+    address = Column(Text, nullable=False)  # Dirección exacta (CR informal address)
+    city = Column(String(100))  # Cantón
+    province = Column(String(100))  # Provincia
+    district = Column(String(100))  # Distrito
+    google_maps_url = Column(String(500))  # Google Maps link (optional)
     gps_latitude = Column(Numeric(10, 8))
     gps_longitude = Column(Numeric(11, 8))
     lot_size_sqm = Column(Numeric(10, 2))
