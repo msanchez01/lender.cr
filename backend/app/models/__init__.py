@@ -1,3 +1,4 @@
+from app.models.appraiser import Appraiser  # noqa: F401
 from app.models.blog import BlogPost  # noqa: F401
 from app.models.property import (  # noqa: F401
     Appraisal,

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   BookOpen,
+  ClipboardCheck,
   FileCheck,
   FileText,
   Handshake,
@@ -18,6 +19,7 @@ const navItems = [
   { label: 'Deals', href: '/deals', icon: Handshake },
   { label: 'Users', href: '/users', icon: Users },
   { label: 'Documents', href: '/documents', icon: FileCheck },
+  { label: 'Appraisers', href: '/appraisers', icon: ClipboardCheck },
   { label: 'Interests', href: '/interests', icon: Heart },
   { label: 'Blog Posts', href: '/blog', icon: BookOpen },
 ]

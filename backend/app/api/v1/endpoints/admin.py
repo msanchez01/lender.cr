@@ -7,7 +7,14 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.core.auth import require_api_key
 from app.core.database import get_db
+from app.models.appraiser import Appraiser as AppraiserModel
 from app.models.investor import InvestorInterest
+from app.schemas.appraiser import (
+    AppraiserCreate as AppraiserCreateSchema,
+    AppraiserList as AppraiserListSchema,
+    AppraiserResponse as AppraiserResponseSchema,
+    AppraiserUpdate as AppraiserUpdateSchema,
+)
 from app.models.property import (
     Appraisal,
     AppraisalStatus,
@@ -549,3 +556,93 @@ async def update_interest_status(
     interest.responded_at = datetime.now(timezone.utc)
     db.commit()
     return {"success": True, "status": data.status}
+
+
+# --- Appraisers ---
+
+
+@router.get("/appraisers", response_model=AppraiserListSchema)
+async def list_appraisers(
+    is_active: bool | None = None,
+    search: str | None = None,
+    db: Session = Depends(get_db),
+    _api_key: str = Depends(require_api_key),
+):
+    query = db.query(AppraiserModel)
+
+    if is_active is not None:
+        query = query.filter(AppraiserModel.is_active == is_active)
+    if search:
+        term = f"%{search}%"
+        query = query.filter(
+            or_(
+                AppraiserModel.appraiser_name.ilike(term),
+                AppraiserModel.company_name.ilike(term),
+                AppraiserModel.email.ilike(term),
+            )
+        )
+
+    total = query.count()
+    appraisers = query.order_by(AppraiserModel.created_at.desc()).all()
+
+    return {"items": appraisers, "total": total}
+
+
+@router.get("/appraisers/{appraiser_id}", response_model=AppraiserResponseSchema)
+async def get_appraiser(
+    appraiser_id: str,
+    db: Session = Depends(get_db),
+    _api_key: str = Depends(require_api_key),
+):
+    appraiser = db.query(AppraiserModel).filter(AppraiserModel.id == appraiser_id).first()
+    if not appraiser:
+        raise HTTPException(status_code=404, detail="Appraiser not found.")
+    return appraiser
+
+
+@router.post("/appraisers", response_model=AppraiserResponseSchema, status_code=201)
+async def create_appraiser(
+    data: AppraiserCreateSchema,
+    db: Session = Depends(get_db),
+    _api_key: str = Depends(require_api_key),
+):
+    appraiser = AppraiserModel(**data.model_dump())
+    db.add(appraiser)
+    db.commit()
+    db.refresh(appraiser)
+    return appraiser
+
+
+@router.put("/appraisers/{appraiser_id}", response_model=AppraiserResponseSchema)
+async def update_appraiser(
+    appraiser_id: str,
+    data: AppraiserUpdateSchema,
+    db: Session = Depends(get_db),
+    _api_key: str = Depends(require_api_key),
+):
+    appraiser = db.query(AppraiserModel).filter(AppraiserModel.id == appraiser_id).first()
+    if not appraiser:
+        raise HTTPException(status_code=404, detail="Appraiser not found.")
+
+    update_data = data.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(appraiser, key, value)
+
+    db.commit()
+    db.refresh(appraiser)
+    return appraiser
+
+
+@router.delete("/appraisers/{appraiser_id}")
+async def delete_appraiser(
+    appraiser_id: str,
+    db: Session = Depends(get_db),
+    _api_key: str = Depends(require_api_key),
+):
+    appraiser = db.query(AppraiserModel).filter(AppraiserModel.id == appraiser_id).first()
+    if not appraiser:
+        raise HTTPException(status_code=404, detail="Appraiser not found.")
+
+    appraiser.is_active = False
+    db.commit()
+    return {"success": True}

@@ -2,11 +2,66 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, CheckCircle, XCircle, Loader2 } from 'lucide-react'
-import { useApplications, Application } from '@/hooks/useApplications'
+import {
+  ArrowLeft,
+  CheckCircle,
+  XCircle,
+  Loader2,
+  Building2,
+  User,
+  FileText,
+  DollarSign,
+  Calendar,
+  MapPin,
+  Maximize2,
+  Image as ImageIcon,
+  ExternalLink,
+  Mail,
+  Phone,
+  Shield,
+  Clock,
+  TrendingUp,
+  Percent,
+} from 'lucide-react'
+import { useApplications } from '@/hooks/useApplications'
 import StatusBadge from '@/components/admin/StatusBadge'
 
 const fmt = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
+const fmtDecimal = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 })
+const fmtNum = new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 })
+
+const PURPOSE_LABELS: Record<string, string> = {
+  property_purchase: 'Property Purchase',
+  refinance: 'Refinance',
+  construction: 'Construction',
+  renovation: 'Renovation',
+  land_acquisition: 'Land Acquisition',
+  debt_consolidation: 'Debt Consolidation',
+  business_expansion: 'Business Expansion',
+  other: 'Other',
+}
+
+const PROPERTY_TYPE_LABELS: Record<string, string> = {
+  house: 'House',
+  apartment: 'Apartment',
+  condo: 'Condo',
+  land: 'Land',
+  commercial: 'Commercial',
+  industrial: 'Industrial',
+  farm: 'Farm',
+  mixed_use: 'Mixed Use',
+  other: 'Other',
+}
+
+const DOC_TYPE_LABELS: Record<string, string> = {
+  title_deed: 'Title Deed',
+  appraisal_report: 'Appraisal Report',
+  tax_receipt: 'Tax Receipt',
+  survey_plan: 'Survey Plan',
+  insurance_policy: 'Insurance Policy',
+  photo: 'Photo',
+  other: 'Other',
+}
 
 const ALL_STATUSES = [
   'draft', 'submitted', 'under_review', 'request_more_info',
@@ -14,11 +69,39 @@ const ALL_STATUSES = [
   'approved', 'rejected', 'withdrawn', 'matching', 'funded', 'expired',
 ]
 
+function InfoItem({ icon: Icon, label, value, mono }: { icon?: React.ElementType; label: string; value: React.ReactNode; mono?: boolean }) {
+  return (
+    <div>
+      <p className="text-xs text-gray-500 mb-0.5 flex items-center gap-1">
+        {Icon && <Icon className="h-3 w-3" />}
+        {label}
+      </p>
+      <p className={`font-medium text-gray-900 text-sm ${mono ? 'font-mono' : ''}`}>{value || '—'}</p>
+    </div>
+  )
+}
+
+function SectionCard({ title, icon: Icon, children, headerRight }: { title: string; icon: React.ElementType; children: React.ReactNode; headerRight?: React.ReactNode }) {
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 p-5">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <Icon className="h-5 w-5 text-gray-400" />
+          {title}
+        </h2>
+        {headerRight}
+      </div>
+      {children}
+    </div>
+  )
+}
+
 export default function ApplicationDetailPage() {
   const params = useParams()
   const router = useRouter()
   const { fetchApplication, updateStatus, recordAppraisal } = useApplications()
-  const [app, setApp] = useState<Application | null>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [app, setApp] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [adminNotes, setAdminNotes] = useState('')
   const [rejectionReason, setRejectionReason] = useState('')
@@ -43,7 +126,7 @@ export default function ApplicationDetailPage() {
     const data = await fetchApplication(id)
     if (data) {
       setApp(data)
-      setAdminNotes(data.admin_notes || '')
+      setAdminNotes('')
     }
     setLoading(false)
   }
@@ -100,7 +183,12 @@ export default function ApplicationDetailPage() {
   }
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64 text-gray-400">Loading application...</div>
+    return (
+      <div className="flex items-center justify-center h-64 text-gray-400 gap-2">
+        <Loader2 className="h-5 w-5 animate-spin" />
+        Loading application...
+      </div>
+    )
   }
 
   if (!app) {
@@ -108,6 +196,12 @@ export default function ApplicationDetailPage() {
   }
 
   const availableStatuses = ALL_STATUSES.filter((s) => s !== app.status)
+  const property = app.property
+  const borrower = app.borrower
+  const images = property?.images || []
+  const documents = property?.documents || []
+  const appraisals = app.appraisals || []
+  const interests = app.interests || []
 
   return (
     <div className="space-y-6 max-w-5xl">
@@ -116,40 +210,179 @@ export default function ApplicationDetailPage() {
         <button onClick={() => router.push('/applications')} className="text-gray-400 hover:text-gray-600">
           <ArrowLeft className="h-5 w-5" />
         </button>
-        <h1 className="text-2xl font-bold text-gray-900">Application {app.application_number}</h1>
-        <StatusBadge status={app.status} type="application" />
+        <div className="flex-1">
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold text-gray-900">Application {app.application_number}</h1>
+            <StatusBadge status={app.status} type="application" />
+          </div>
+          {app.rejection_reason && (
+            <p className="text-sm text-red-600 mt-1">Rejection reason: {app.rejection_reason}</p>
+          )}
+        </div>
       </div>
 
       {/* Application Info */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h2 className="text-lg font-semibold text-gray-900 mb-3">Application Info</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+      <SectionCard title="Application Details" icon={FileText}>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4 text-sm">
+          <InfoItem icon={DollarSign} label="Amount Requested" value={fmt.format(app.amount_requested)} mono />
+          <InfoItem icon={DollarSign} label="Currency" value={(app.currency || 'USD').toUpperCase()} />
+          <InfoItem label="Purpose" value={PURPOSE_LABELS[app.purpose] || app.purpose || '—'} />
+          {app.purpose_description && (
+            <InfoItem label="Purpose Details" value={app.purpose_description} />
+          )}
+          <InfoItem icon={Calendar} label="Preferred Term" value={app.preferred_term_months ? `${app.preferred_term_months} months` : '—'} />
+          <InfoItem icon={Percent} label="Max Interest Rate" value={app.max_interest_rate_monthly != null ? `${Number(app.max_interest_rate_monthly).toFixed(2)}% /mo` : '—'} />
+          <InfoItem icon={TrendingUp} label="Preliminary LTV" value={app.preliminary_ltv != null ? `${Number(app.preliminary_ltv).toFixed(1)}%` : '—'} />
+          <InfoItem icon={TrendingUp} label="Final LTV" value={app.final_ltv != null ? `${Number(app.final_ltv).toFixed(1)}%` : '—'} />
+        </div>
+        <div className="border-t border-gray-100 mt-4 pt-4 grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-3 text-sm">
+          <InfoItem icon={Clock} label="Created" value={app.created_at ? new Date(app.created_at).toLocaleString() : '—'} />
+          <InfoItem icon={Clock} label="Submitted" value={app.submitted_at ? new Date(app.submitted_at).toLocaleString() : '—'} />
+          <InfoItem icon={Clock} label="Approved" value={app.approved_at ? new Date(app.approved_at).toLocaleString() : '—'} />
+        </div>
+      </SectionCard>
+
+      {/* Borrower Info */}
+      <SectionCard title="Borrower" icon={User}>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4 text-sm">
+          <InfoItem icon={User} label="Name" value={borrower?.name} />
+          <InfoItem icon={Mail} label="Email" value={
+            borrower?.email ? (
+              <a href={`mailto:${borrower.email}`} className="text-primary-600 hover:underline">{borrower.email}</a>
+            ) : '—'
+          } />
+          <InfoItem icon={Phone} label="Phone" value={borrower?.phone || 'N/A'} />
           <div>
-            <p className="text-gray-500">Amount</p>
-            <p className="font-medium text-gray-900">{fmt.format(app.amount_requested)}</p>
-          </div>
-          <div>
-            <p className="text-gray-500">Term</p>
-            <p className="font-medium text-gray-900">{app.preferred_term_months} months</p>
-          </div>
-          <div>
-            <p className="text-gray-500">Purpose</p>
-            <p className="font-medium text-gray-900">{app.purpose}</p>
-          </div>
-          <div>
-            <p className="text-gray-500">LTV</p>
-            <p className="font-medium text-gray-900">{app.preliminary_ltv != null ? `${Number(app.preliminary_ltv).toFixed(1)}%` : '—'}</p>
-          </div>
-          <div>
-            <p className="text-gray-500">Created</p>
-            <p className="font-medium text-gray-900">{app.created_at ? new Date(app.created_at).toLocaleDateString() : '—'}</p>
-          </div>
-          <div>
-            <p className="text-gray-500">Submitted</p>
-            <p className="font-medium text-gray-900">{app.submitted_at ? new Date(app.submitted_at).toLocaleDateString() : '—'}</p>
+            <p className="text-xs text-gray-500 mb-0.5 flex items-center gap-1">
+              <Shield className="h-3 w-3" />
+              KYC Status
+            </p>
+            {borrower?.kyc_verified ? (
+              <span className="inline-flex items-center gap-1 text-sm font-medium text-green-600">
+                <CheckCircle className="h-4 w-4" /> Verified
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 text-sm font-medium text-red-500">
+                <XCircle className="h-4 w-4" /> Not Verified
+              </span>
+            )}
           </div>
         </div>
-      </div>
+      </SectionCard>
+
+      {/* Property Info */}
+      <SectionCard title="Property" icon={Building2}>
+        {property ? (
+          <>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4 text-sm">
+              <InfoItem label="Type" value={PROPERTY_TYPE_LABELS[property.property_type] || property.property_type || '—'} />
+              <InfoItem icon={MapPin} label="Address" value={property.address} />
+              <InfoItem label="City" value={property.city} />
+              <InfoItem label="Province" value={property.province} />
+              <InfoItem icon={DollarSign} label="Estimated Value" value={property.estimated_value_usd != null ? fmt.format(property.estimated_value_usd) : '—'} mono />
+              <InfoItem icon={DollarSign} label="Appraised Value" value={property.appraised_value_usd != null ? fmt.format(property.appraised_value_usd) : '—'} mono />
+              <InfoItem icon={Maximize2} label="Lot Size" value={property.lot_size_sqm != null ? `${fmtNum.format(property.lot_size_sqm)} sqm` : '—'} />
+              <InfoItem icon={Maximize2} label="Built Area" value={property.built_area_sqm != null ? `${fmtNum.format(property.built_area_sqm)} sqm` : '—'} />
+            </div>
+
+            {/* Property Images */}
+            {images.length > 0 && (
+              <div className="mt-5">
+                <p className="text-xs text-gray-500 mb-2 flex items-center gap-1">
+                  <ImageIcon className="h-3 w-3" />
+                  Property Photos ({images.length})
+                </p>
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+                  {images.map((img: { id: string; image_url: string; is_primary: boolean }) => (
+                    <a
+                      key={img.id}
+                      href={img.image_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group relative block aspect-square rounded-lg overflow-hidden border border-gray-200 hover:border-primary-400 transition-colors"
+                    >
+                      <img
+                        src={img.image_url}
+                        alt="Property"
+                        className="h-full w-full object-cover group-hover:scale-105 transition-transform"
+                      />
+                      {img.is_primary && (
+                        <span className="absolute top-1 left-1 bg-primary-600 text-white text-[10px] font-medium px-1.5 py-0.5 rounded">
+                          Primary
+                        </span>
+                      )}
+                      <span className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                        <ExternalLink className="h-4 w-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Property Documents */}
+            {documents.length > 0 && (
+              <div className="mt-5">
+                <p className="text-xs text-gray-500 mb-2 flex items-center gap-1">
+                  <FileText className="h-3 w-3" />
+                  Documents ({documents.length})
+                </p>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-gray-100 text-left text-gray-500">
+                        <th className="pb-2 font-medium">Type</th>
+                        <th className="pb-2 font-medium">File Name</th>
+                        <th className="pb-2 font-medium">Status</th>
+                        <th className="pb-2 font-medium text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50">
+                      {documents.map((doc: { id: string; document_type: string; file_url: string; file_name: string; is_verified: boolean }) => (
+                        <tr key={doc.id}>
+                          <td className="py-2">
+                            <span className="inline-flex items-center rounded-full bg-gray-100 text-gray-700 px-2.5 py-0.5 text-xs font-medium">
+                              {DOC_TYPE_LABELS[doc.document_type] || doc.document_type}
+                            </span>
+                          </td>
+                          <td className="py-2 text-gray-700">{doc.file_name}</td>
+                          <td className="py-2">
+                            {doc.is_verified ? (
+                              <span className="inline-flex items-center gap-1 text-green-600 text-xs font-medium">
+                                <CheckCircle className="h-3.5 w-3.5" /> Verified
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 text-amber-500 text-xs font-medium">
+                                <Clock className="h-3.5 w-3.5" /> Pending
+                              </span>
+                            )}
+                          </td>
+                          <td className="py-2 text-right">
+                            <a
+                              href={doc.file_url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-1 text-primary-600 hover:text-primary-700 text-xs font-medium"
+                            >
+                              View <ExternalLink className="h-3 w-3" />
+                            </a>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {images.length === 0 && documents.length === 0 && (
+              <p className="text-sm text-gray-400 mt-4">No images or documents uploaded.</p>
+            )}
+          </>
+        ) : (
+          <p className="text-sm text-gray-400">No property linked to this application.</p>
+        )}
+      </SectionCard>
 
       {/* Status Actions */}
       <div className="bg-white rounded-xl border border-gray-200 p-5">
@@ -171,7 +404,7 @@ export default function ApplicationDetailPage() {
             disabled={saving}
             className="rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-500"
           >
-            <option value="">— Change to —</option>
+            <option value="">-- Change to --</option>
             {availableStatuses.map((s) => (
               <option key={s} value={s}>
                 {s.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
@@ -211,114 +444,20 @@ export default function ApplicationDetailPage() {
         </div>
       </div>
 
-      {/* Borrower Info */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h2 className="text-lg font-semibold text-gray-900 mb-3">Borrower Info</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-          <div>
-            <p className="text-gray-500">Name</p>
-            <p className="font-medium text-gray-900">{app.borrower?.name || app.borrower_name || '—'}</p>
-          </div>
-          <div>
-            <p className="text-gray-500">Email</p>
-            <p className="font-medium text-gray-900">{app.borrower?.email || app.borrower_email || '—'}</p>
-          </div>
-          <div>
-            <p className="text-gray-500">Phone</p>
-            <p className="font-medium text-gray-900">{app.borrower?.phone || app.borrower_phone || 'N/A'}</p>
-          </div>
-          <div>
-            <p className="text-gray-500">KYC</p>
-            <p className="font-medium">
-              {(app.borrower?.kyc_verified || app.borrower_kyc_verified) ? (
-                <span className="inline-flex items-center gap-1 text-green-600">
-                  <CheckCircle className="h-4 w-4" /> Verified
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1 text-red-500">
-                  <XCircle className="h-4 w-4" /> Not Verified
-                </span>
-              )}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Property Info */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h2 className="text-lg font-semibold text-gray-900 mb-3">Property Info</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm mb-4">
-          <div>
-            <p className="text-gray-500">Type</p>
-            <p className="font-medium text-gray-900">{app.property_type}</p>
-          </div>
-          <div>
-            <p className="text-gray-500">Address</p>
-            <p className="font-medium text-gray-900">{app.property_address}</p>
-          </div>
-          <div>
-            <p className="text-gray-500">City</p>
-            <p className="font-medium text-gray-900">{app.property_city}</p>
-          </div>
-          <div>
-            <p className="text-gray-500">Value</p>
-            <p className="font-medium text-gray-900">{fmt.format(app.property_value_usd)}</p>
-          </div>
-        </div>
-
-        {/* Images */}
-        {app.property_images && app.property_images.length > 0 && (
-          <div className="mb-4">
-            <p className="text-sm text-gray-500 mb-2">Images</p>
-            <div className="flex flex-wrap gap-2">
-              {app.property_images.map((url, i) => (
-                <img
-                  key={i}
-                  src={url}
-                  alt={`Property image ${i + 1}`}
-                  className="h-20 w-20 rounded-lg object-cover border border-gray-200"
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Documents */}
-        {app.property_documents && app.property_documents.length > 0 && (
-          <div>
-            <p className="text-sm text-gray-500 mb-2">Documents</p>
-            <div className="space-y-1">
-              {app.property_documents.map((doc) => (
-                <div key={doc.id} className="flex items-center gap-2 text-sm">
-                  <a href={doc.file_url} target="_blank" rel="noreferrer" className="text-primary-600 hover:underline">
-                    {doc.file_name}
-                  </a>
-                  <span className="text-gray-400">({doc.type})</span>
-                  {doc.verified ? (
-                    <CheckCircle className="h-3.5 w-3.5 text-green-500" />
-                  ) : (
-                    <XCircle className="h-3.5 w-3.5 text-gray-300" />
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
       {/* Appraisals */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-gray-900">Appraisals</h2>
+      <SectionCard
+        title="Appraisals"
+        icon={FileText}
+        headerRight={
           <button
             onClick={() => setShowAppraisalForm(!showAppraisalForm)}
             className="rounded-lg bg-primary-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-700"
           >
             {showAppraisalForm ? 'Cancel' : 'Record Appraisal'}
           </button>
-        </div>
-
-        {app.appraisals && app.appraisals.length > 0 && (
+        }
+      >
+        {appraisals.length > 0 && (
           <div className="overflow-x-auto mb-4">
             <table className="w-full text-sm">
               <thead>
@@ -329,19 +468,21 @@ export default function ApplicationDetailPage() {
                   <th className="pb-2 font-medium">Date</th>
                   <th className="pb-2 font-medium">Status</th>
                   <th className="pb-2 font-medium">Cost</th>
+                  <th className="pb-2 font-medium">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {app.appraisals.map((a) => (
+                {appraisals.map((a: { id: string; appraiser_name: string; appraiser_company: string; appraised_value_usd: number | null; appraisal_date: string | null; status: string; cost_usd: number | null; notes: string | null }) => (
                   <tr key={a.id}>
                     <td className="py-2 text-gray-700">{a.appraiser_name}</td>
                     <td className="py-2 text-gray-500">{a.appraiser_company}</td>
-                    <td className="py-2 text-gray-700">{fmt.format(a.appraised_value_usd)}</td>
-                    <td className="py-2 text-gray-400">{new Date(a.appraisal_date).toLocaleDateString()}</td>
+                    <td className="py-2 text-gray-700 font-mono">{a.appraised_value_usd != null ? fmt.format(a.appraised_value_usd) : '—'}</td>
+                    <td className="py-2 text-gray-400">{a.appraisal_date ? new Date(a.appraisal_date).toLocaleDateString() : '—'}</td>
                     <td className="py-2">
                       <StatusBadge status={a.status} />
                     </td>
-                    <td className="py-2 text-gray-500">{fmt.format(a.cost_usd)}</td>
+                    <td className="py-2 text-gray-500">{a.cost_usd != null ? fmtDecimal.format(a.cost_usd) : '—'}</td>
+                    <td className="py-2 text-gray-500 max-w-[200px] truncate">{a.notes || '—'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -429,36 +570,45 @@ export default function ApplicationDetailPage() {
           </div>
         )}
 
-        {(!app.appraisals || app.appraisals.length === 0) && !showAppraisalForm && (
+        {appraisals.length === 0 && !showAppraisalForm && (
           <p className="text-sm text-gray-400">No appraisals recorded.</p>
         )}
-      </div>
+      </SectionCard>
 
       {/* Investor Interests */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h2 className="text-lg font-semibold text-gray-900 mb-3">Investor Interests</h2>
-        {app.interests && app.interests.length > 0 ? (
+      <SectionCard title={`Investor Interests (${interests.length})`} icon={DollarSign}>
+        {interests.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-100 text-left text-gray-500">
                   <th className="pb-2 font-medium">Investor</th>
+                  <th className="pb-2 font-medium">Email</th>
                   <th className="pb-2 font-medium">Amount</th>
-                  <th className="pb-2 font-medium">Rate</th>
+                  <th className="pb-2 font-medium">Rate (/mo)</th>
                   <th className="pb-2 font-medium">Message</th>
                   <th className="pb-2 font-medium">Status</th>
+                  <th className="pb-2 font-medium">Date</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {app.interests.map((interest) => (
+                {interests.map((interest: { id: string; investor_name: string; investor_email: string; amount_willing: number | null; proposed_rate_monthly: number | null; message: string | null; status: string; created_at: string | null }) => (
                   <tr key={interest.id}>
-                    <td className="py-2 text-gray-700">{interest.investor_name}</td>
-                    <td className="py-2 text-gray-700">{fmt.format(interest.amount_willing_usd)}</td>
-                    <td className="py-2 text-gray-700">{interest.proposed_rate}%</td>
-                    <td className="py-2 text-gray-500 max-w-xs truncate">{interest.message || '-'}</td>
+                    <td className="py-2 text-gray-700 font-medium">{interest.investor_name}</td>
+                    <td className="py-2 text-gray-500">
+                      {interest.investor_email ? (
+                        <a href={`mailto:${interest.investor_email}`} className="text-primary-600 hover:underline">
+                          {interest.investor_email}
+                        </a>
+                      ) : '—'}
+                    </td>
+                    <td className="py-2 text-gray-700 font-mono">{interest.amount_willing != null ? fmt.format(interest.amount_willing) : '—'}</td>
+                    <td className="py-2 text-gray-700">{interest.proposed_rate_monthly != null ? `${Number(interest.proposed_rate_monthly).toFixed(2)}%` : '—'}</td>
+                    <td className="py-2 text-gray-500 max-w-[200px] truncate">{interest.message || '—'}</td>
                     <td className="py-2">
                       <StatusBadge status={interest.status} type="interest" />
                     </td>
+                    <td className="py-2 text-gray-400 whitespace-nowrap">{interest.created_at ? new Date(interest.created_at).toLocaleDateString() : '—'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -467,7 +617,7 @@ export default function ApplicationDetailPage() {
         ) : (
           <p className="text-sm text-gray-400">No investor interests yet.</p>
         )}
-      </div>
+      </SectionCard>
     </div>
   )
 }
