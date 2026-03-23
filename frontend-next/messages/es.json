@@ -245,7 +245,7 @@
     "roleBorrower": "Propietario — Necesito Capital",
     "roleInvestor": "Inversionista — Quiero Invertir",
     "phoneLabel": "Número de Teléfono",
-    "phoneRequired": "El número de teléfono es requerido para propietarios.",
+    "phoneRequired": "Por favor ingresa un número de teléfono válido.",
     "loginButton": "Iniciar Sesión",
     "registerButton": "Crear Cuenta",
     "sendResetLink": "Enviar Enlace",

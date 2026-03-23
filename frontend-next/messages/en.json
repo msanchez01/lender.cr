@@ -245,7 +245,7 @@
     "roleBorrower": "Property Owner / Borrower",
     "roleInvestor": "Investor",
     "phoneLabel": "Phone Number",
-    "phoneRequired": "Phone number is required for borrowers.",
+    "phoneRequired": "Please enter a valid phone number.",
     "loginButton": "Log In",
     "registerButton": "Create Account",
     "sendResetLink": "Send Reset Link",
