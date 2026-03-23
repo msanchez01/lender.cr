@@ -169,13 +169,27 @@ export default function ApplicationDetailPage() {
     setSaving(false)
   }
 
-  async function handleRecordAppraisal() {
+  async function handleRecordAppraisal(sendEmail = false) {
     setSaving(true)
-    const ok = await recordAppraisal(id, {
-      ...appraisalForm,
-      notes: appraisalForm.notes || undefined,
-    })
-    if (ok) {
+    try {
+      // Create the appraisal
+      const result = await api.post(`/admin/applications/${id}/appraisal`, {
+        ...appraisalForm,
+        notes: appraisalForm.notes || undefined,
+      })
+      const appraisalId = result.data?.appraisal_id
+
+      // Send email if requested
+      if (sendEmail && appraisalId) {
+        try {
+          await api.post(`/admin/applications/${id}/appraisal/${appraisalId}/send`)
+          alert('Appraisal saved and request sent to appraiser!')
+        } catch (err: unknown) {
+          const axiosErr = err as { response?: { data?: { detail?: string } } }
+          alert(`Appraisal saved, but email failed: ${axiosErr.response?.data?.detail || 'Unknown error'}`)
+        }
+      }
+
       setShowAppraisalForm(false)
       setAppraisalForm({
         appraiser_id: '',
@@ -188,6 +202,8 @@ export default function ApplicationDetailPage() {
         cost_usd: 0,
       })
       await load()
+    } catch {
+      alert('Failed to save appraisal.')
     }
     setSaving(false)
   }
@@ -604,13 +620,24 @@ export default function ApplicationDetailPage() {
                 className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
             </div>
-            <button
-              onClick={handleRecordAppraisal}
-              disabled={saving}
-              className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-50"
-            >
-              Save Appraisal
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={() => handleRecordAppraisal(false)}
+                disabled={saving}
+                className="rounded-lg bg-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-300 disabled:opacity-50"
+              >
+                Save Only
+              </button>
+              {appraisalForm.appraiser_id && (
+                <button
+                  onClick={() => handleRecordAppraisal(true)}
+                  disabled={saving}
+                  className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-50"
+                >
+                  {saving ? 'Saving & Sending...' : 'Save & Send to Appraiser'}
+                </button>
+              )}
+            </div>
           </div>
         )}
 
