@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, CheckCircle, XCircle } from 'lucide-react'
+import { ArrowLeft, CheckCircle, XCircle, Loader2 } from 'lucide-react'
 import { useApplications, Application } from '@/hooks/useApplications'
 import StatusBadge from '@/components/admin/StatusBadge'
 
