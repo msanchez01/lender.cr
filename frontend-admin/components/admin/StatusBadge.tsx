@@ -6,6 +6,7 @@ interface StatusBadgeProps {
 }
 
 const applicationColors: Record<string, string> = {
+  not_requested: 'bg-gray-100 text-gray-500',
   draft: 'bg-gray-100 text-gray-700',
   submitted: 'bg-blue-100 text-blue-700',
   under_review: 'bg-yellow-100 text-yellow-700',

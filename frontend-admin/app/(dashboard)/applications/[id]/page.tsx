@@ -509,7 +509,7 @@ export default function ApplicationDetailPage() {
                     <td className="py-2 text-gray-500">{a.cost_usd != null ? fmtDecimal.format(a.cost_usd) : '—'}</td>
                     <td className="py-2 text-gray-500 max-w-[200px] truncate">{a.notes || '—'}</td>
                     <td className="py-2">
-                      {a.status === 'not_requested' && a.appraiser_name && (
+                      {a.status?.toLowerCase() !== 'ordered' && a.status?.toLowerCase() !== 'completed' && a.status?.toLowerCase() !== 'scheduled' && a.appraiser_name && (
                         <button
                           onClick={() => handleSendToAppraiser(a.id)}
                           disabled={sendingEmail}
@@ -518,8 +518,8 @@ export default function ApplicationDetailPage() {
                           {sendingEmail ? 'Sending...' : 'Send to Appraiser'}
                         </button>
                       )}
-                      {a.status === 'ordered' && (
-                        <span className="text-xs text-gray-400">Email sent</span>
+                      {a.status?.toLowerCase() === 'ordered' && (
+                        <span className="text-xs text-green-600">✓ Email sent</span>
                       )}
                     </td>
                   </tr>
@@ -578,9 +578,11 @@ export default function ApplicationDetailPage() {
                   onChange={(e) => setAppraisalForm({ ...appraisalForm, status: e.target.value })}
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
+                  <option value="not_requested">Not Requested</option>
                   <option value="ordered">Ordered</option>
-                  <option value="in_progress">In Progress</option>
+                  <option value="scheduled">Scheduled</option>
                   <option value="completed">Completed</option>
+                  <option value="disputed">Disputed</option>
                 </select>
               </div>
               <div>
