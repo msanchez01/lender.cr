@@ -363,6 +363,8 @@
     "descriptionLabel": "Description",
     "saveProperty": "Save Property",
     "saving": "Saving...",
+    "saved": "Changes saved!",
+    "saveChanges": "Save Changes",
     "applyForLoan": "Apply for a Loan",
     "editProperty": "Edit",
     "deleteProperty": "Delete",

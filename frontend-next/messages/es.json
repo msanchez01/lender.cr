@@ -363,6 +363,8 @@
     "descriptionLabel": "Descripción",
     "saveProperty": "Guardar Propiedad",
     "saving": "Guardando...",
+    "saved": "¡Cambios guardados!",
+    "saveChanges": "Guardar Cambios",
     "applyForLoan": "Solicitar Préstamo",
     "editProperty": "Editar",
     "deleteProperty": "Eliminar",
