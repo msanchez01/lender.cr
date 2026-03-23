@@ -6,6 +6,7 @@ import { useRouter } from '@/i18n/navigation'
 import { Loader2, ArrowLeft } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
 import { borrowerApi } from '@/lib/api-client'
+import LocationSelector from '@/components/LocationSelector'
 
 const PROPERTY_TYPES = ['house', 'apartment', 'lot', 'commercial', 'farm', 'mixed'] as const
 
@@ -18,8 +19,9 @@ export default function NewPropertyPage() {
   const [form, setForm] = useState({
     property_type: 'house',
     address: '',
-    city: '',
     province: '',
+    canton: '',
+    district: '',
     lot_size_sqm: '',
     built_area_sqm: '',
     year_built: '',
@@ -47,8 +49,9 @@ export default function NewPropertyPage() {
         address: form.address.trim(),
       }
 
-      if (form.city.trim()) payload.city = form.city.trim()
-      if (form.province.trim()) payload.province = form.province.trim()
+      if (form.province) payload.province = form.province
+      if (form.canton) payload.city = form.canton
+      if (form.district) payload.address = `${form.address.trim()}, ${form.district}`
       if (form.lot_size_sqm) payload.lot_size_sqm = parseFloat(form.lot_size_sqm)
       if (form.built_area_sqm) payload.built_area_sqm = parseFloat(form.built_area_sqm)
       if (form.year_built) payload.year_built = parseInt(form.year_built, 10)
@@ -118,26 +121,14 @@ export default function NewPropertyPage() {
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className={labelClass}>{t('cityLabel')}</label>
-            <input
-              type="text"
-              value={form.city}
-              onChange={(e) => updateField('city', e.target.value)}
-              className={inputClass}
-            />
-          </div>
-          <div>
-            <label className={labelClass}>{t('provinceLabel')}</label>
-            <input
-              type="text"
-              value={form.province}
-              onChange={(e) => updateField('province', e.target.value)}
-              className={inputClass}
-            />
-          </div>
-        </div>
+        <LocationSelector
+          province={form.province}
+          canton={form.canton}
+          district={form.district}
+          onProvinceChange={(v) => updateField('province', v)}
+          onCantonChange={(v) => updateField('canton', v)}
+          onDistrictChange={(v) => updateField('district', v)}
+        />
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
