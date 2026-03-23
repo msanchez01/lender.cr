@@ -51,12 +51,13 @@ class StatusUpdate(BaseModel):
 
 
 class AppraisalCreate(BaseModel):
+    appraiser_id: str | None = None
     appraiser_name: str | None = None
     appraiser_company: str | None = None
     appraiser_license: str | None = None
     appraised_value_usd: float | None = None
     appraisal_date: str | None = None
-    status: str = "ordered"
+    status: str = "not_requested"
     notes: str | None = None
     cost_usd: float | None = None
 
@@ -299,16 +300,30 @@ async def record_appraisal(
     db: Session = Depends(get_db),
     _api_key: str = Depends(require_api_key),
 ):
+    from app.models.appraiser import Appraiser as AppraiserModel
+
     app = db.query(LoanApplication).filter(LoanApplication.id == app_id).first()
     if not app:
         raise HTTPException(status_code=404, detail="Application not found.")
 
+    # Auto-fill from appraiser record if appraiser_id provided
+    appraiser_name = data.appraiser_name
+    appraiser_company = data.appraiser_company
+    appraiser_license = data.appraiser_license
+    if data.appraiser_id:
+        appraiser = db.query(AppraiserModel).filter(AppraiserModel.id == data.appraiser_id).first()
+        if appraiser:
+            appraiser_name = appraiser.appraiser_name
+            appraiser_company = appraiser.company_name
+            appraiser_license = appraiser.license_number
+
     appraisal = Appraisal(
         property_id=app.property_id,
         loan_application_id=app.id,
-        appraiser_name=data.appraiser_name,
-        appraiser_company=data.appraiser_company,
-        appraiser_license=data.appraiser_license,
+        appraiser_id=data.appraiser_id,
+        appraiser_name=appraiser_name,
+        appraiser_company=appraiser_company,
+        appraiser_license=appraiser_license,
         appraised_value_usd=data.appraised_value_usd,
         appraisal_date=data.appraisal_date,
         status=data.status,
@@ -501,6 +516,114 @@ async def verify_document(
     doc.verified_at = datetime.now(timezone.utc)
     db.commit()
     return {"success": True}
+
+
+# --- Send Appraisal Request Email ---
+
+@router.post("/applications/{app_id}/appraisal/{appraisal_id}/send")
+async def send_appraisal_request(
+    app_id: str,
+    appraisal_id: str,
+    db: Session = Depends(get_db),
+    _api_key: str = Depends(require_api_key),
+):
+    from app.models.appraiser import Appraiser as AppraiserModel
+
+    appraisal = db.query(Appraisal).filter(Appraisal.id == appraisal_id).first()
+    if not appraisal:
+        raise HTTPException(status_code=404, detail="Appraisal not found.")
+
+    # Get appraiser email
+    appraiser_email = None
+    if appraisal.appraiser_id:
+        appraiser = db.query(AppraiserModel).filter(AppraiserModel.id == appraisal.appraiser_id).first()
+        if appraiser:
+            appraiser_email = appraiser.email
+
+    if not appraiser_email:
+        raise HTTPException(status_code=400, detail="No appraiser email found. Please assign an appraiser first.")
+
+    # Get property and application details
+    app = db.query(LoanApplication).filter(LoanApplication.id == app_id).first()
+    prop = db.query(Property).filter(Property.id == appraisal.property_id).first()
+    if not prop:
+        raise HTTPException(status_code=404, detail="Property not found.")
+
+    borrower_profile = db.query(BorrowerProfile).filter(BorrowerProfile.id == app.borrower_id).first() if app else None
+    borrower_user = db.query(User).filter(User.id == borrower_profile.user_id).first() if borrower_profile else None
+
+    # Build document links
+    docs_html = ""
+    if prop.documents:
+        docs_html = "<h3>Documents</h3><ul>"
+        for doc in prop.documents:
+            docs_html += f'<li><a href="{doc.file_url}">{doc.document_type}: {doc.file_name or "View"}</a></li>'
+        docs_html += "</ul>"
+
+    # Build image links
+    images_html = ""
+    if prop.images:
+        images_html = "<h3>Property Photos</h3>"
+        for img in prop.images:
+            images_html += f'<img src="{img.image_url}" width="300" style="margin:5px;border-radius:8px;" />'
+
+    # Build email
+    from app.core.config import settings
+    import logging
+    logger = logging.getLogger(__name__)
+
+    subject = f"Appraisal Request — {app.application_number if app else 'N/A'} — {prop.address}"
+    html = f"""
+    <h2>Appraisal Request from Lender.cr</h2>
+    <p>We'd like to request an appraisal for the following property:</p>
+
+    <h3>Property Details</h3>
+    <table style="border-collapse:collapse;">
+        <tr><td style="padding:4px 12px 4px 0;color:#666;">Type:</td><td>{prop.property_type.value if prop.property_type else ''}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#666;">Address:</td><td>{prop.address}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#666;">Location:</td><td>{', '.join(filter(None, [prop.district, prop.city, prop.province]))}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#666;">Lot Size:</td><td>{prop.lot_size_sqm} m² </td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#666;">Built Area:</td><td>{prop.built_area_sqm} m²</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#666;">Year Built:</td><td>{prop.year_built or 'N/A'}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#666;">Folio Real:</td><td>{prop.folio_real or 'N/A'}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#666;">Plano Catastrado:</td><td>{prop.plano_catastrado or 'N/A'}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#666;">Owner Est. Value:</td><td>${float(prop.estimated_value_usd):,.0f}</td></tr>
+        {f'<tr><td style="padding:4px 12px 4px 0;color:#666;">Google Maps:</td><td><a href="{prop.google_maps_url}">View on Map</a></td></tr>' if prop.google_maps_url else ''}
+    </table>
+
+    <h3>Contact</h3>
+    <p><strong>Borrower:</strong> {borrower_user.first_name + ' ' + borrower_user.last_name if borrower_user else 'N/A'}<br/>
+    <strong>Phone:</strong> {borrower_user.phone if borrower_user else 'N/A'}<br/>
+    <strong>Email:</strong> {borrower_user.email if borrower_user else 'N/A'}</p>
+
+    {images_html}
+    {docs_html}
+
+    <p style="margin-top:20px;color:#666;">Application #{app.application_number if app else ''}<br/>
+    Sent from <a href="{settings.SITE_URL}">Lender.cr</a></p>
+    """
+
+    if settings.RESEND_API_KEY:
+        try:
+            import resend
+            resend.api_key = settings.RESEND_API_KEY
+            resend.Emails.send({
+                "from": settings.FROM_EMAIL,
+                "to": [appraiser_email],
+                "subject": subject,
+                "html": html,
+            })
+        except Exception:
+            logger.exception("Failed to send appraisal request email")
+            raise HTTPException(status_code=500, detail="Failed to send email.")
+    else:
+        logger.warning("RESEND_API_KEY not configured — email not sent")
+
+    # Update appraisal status to ordered
+    appraisal.status = "ORDERED"
+    db.commit()
+
+    return {"success": True, "message": f"Appraisal request sent to {appraiser_email}"}
 
 
 # --- Interests ---

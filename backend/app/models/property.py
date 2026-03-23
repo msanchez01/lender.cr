@@ -61,6 +61,7 @@ class Currency(str, enum.Enum):
 
 
 class AppraisalStatus(str, enum.Enum):
+    NOT_REQUESTED = "not_requested"
     ORDERED = "ordered"
     SCHEDULED = "scheduled"
     COMPLETED = "completed"
@@ -173,13 +174,14 @@ class Appraisal(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     property_id = Column(UUID(as_uuid=True), ForeignKey("properties.id"))
     loan_application_id = Column(UUID(as_uuid=True), ForeignKey("loan_applications.id"))
+    appraiser_id = Column(UUID(as_uuid=True), ForeignKey("appraisers.id"), nullable=True)
     appraiser_name = Column(String(200))
     appraiser_company = Column(String(200))
     appraiser_license = Column(String(50))
     appraised_value_usd = Column(Numeric(14, 2))
     appraisal_date = Column(Date)
     report_url = Column(String(500))
-    status = Column(Enum(AppraisalStatus), default=AppraisalStatus.ORDERED)
+    status = Column(Enum(AppraisalStatus), default=AppraisalStatus.NOT_REQUESTED)
     notes = Column(Text)
     cost_usd = Column(Numeric(8, 2))
     paid_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)

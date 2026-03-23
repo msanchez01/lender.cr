@@ -24,6 +24,7 @@ import {
   Percent,
 } from 'lucide-react'
 import { useApplications } from '@/hooks/useApplications'
+import api from '@/lib/api'
 import StatusBadge from '@/components/admin/StatusBadge'
 
 const fmt = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
@@ -109,15 +110,18 @@ export default function ApplicationDetailPage() {
 
   // Appraisal form
   const [showAppraisalForm, setShowAppraisalForm] = useState(false)
+  const [appraisers, setAppraisers] = useState<{ id: string; appraiser_name: string; company_name: string }[]>([])
   const [appraisalForm, setAppraisalForm] = useState({
+    appraiser_id: '',
     appraiser_name: '',
     appraiser_company: '',
     appraised_value_usd: 0,
     appraisal_date: '',
-    status: 'ordered',
+    status: 'not_requested',
     notes: '',
     cost_usd: 0,
   })
+  const [sendingEmail, setSendingEmail] = useState(false)
 
   const id = params.id as string
 
@@ -128,6 +132,11 @@ export default function ApplicationDetailPage() {
       setApp(data)
       setAdminNotes('')
     }
+    // Fetch appraisers for dropdown
+    try {
+      const { data: appraiserData } = await api.get('/admin/appraisers?is_active=true')
+      setAppraisers(appraiserData.items || [])
+    } catch { /* ignore */ }
     setLoading(false)
   }
 
@@ -169,17 +178,32 @@ export default function ApplicationDetailPage() {
     if (ok) {
       setShowAppraisalForm(false)
       setAppraisalForm({
+        appraiser_id: '',
         appraiser_name: '',
         appraiser_company: '',
         appraised_value_usd: 0,
         appraisal_date: '',
-        status: 'ordered',
+        status: 'not_requested',
         notes: '',
         cost_usd: 0,
       })
       await load()
     }
     setSaving(false)
+  }
+
+  async function handleSendToAppraiser(appraisalId: string) {
+    setSendingEmail(true)
+    try {
+      await api.post(`/admin/applications/${id}/appraisal/${appraisalId}/send`)
+      await load()
+      alert('Appraisal request sent!')
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { data?: { detail?: string } } }
+      alert(axiosErr.response?.data?.detail || 'Failed to send email')
+    } finally {
+      setSendingEmail(false)
+    }
   }
 
   if (loading) {
@@ -469,6 +493,7 @@ export default function ApplicationDetailPage() {
                   <th className="pb-2 font-medium">Status</th>
                   <th className="pb-2 font-medium">Cost</th>
                   <th className="pb-2 font-medium">Notes</th>
+                  <th className="pb-2 font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
@@ -483,6 +508,20 @@ export default function ApplicationDetailPage() {
                     </td>
                     <td className="py-2 text-gray-500">{a.cost_usd != null ? fmtDecimal.format(a.cost_usd) : '—'}</td>
                     <td className="py-2 text-gray-500 max-w-[200px] truncate">{a.notes || '—'}</td>
+                    <td className="py-2">
+                      {a.status === 'not_requested' && a.appraiser_name && (
+                        <button
+                          onClick={() => handleSendToAppraiser(a.id)}
+                          disabled={sendingEmail}
+                          className="text-xs bg-primary-600 text-white px-3 py-1 rounded-lg hover:bg-primary-700 disabled:opacity-50"
+                        >
+                          {sendingEmail ? 'Sending...' : 'Send to Appraiser'}
+                        </button>
+                      )}
+                      {a.status === 'ordered' && (
+                        <span className="text-xs text-gray-400">Email sent</span>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -493,23 +532,26 @@ export default function ApplicationDetailPage() {
         {showAppraisalForm && (
           <div className="border border-gray-200 rounded-lg p-4 space-y-3">
             <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs text-gray-500 mb-1">Appraiser Name</label>
-                <input
-                  type="text"
-                  value={appraisalForm.appraiser_name}
-                  onChange={(e) => setAppraisalForm({ ...appraisalForm, appraiser_name: e.target.value })}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-gray-500 mb-1">Appraiser Company</label>
-                <input
-                  type="text"
-                  value={appraisalForm.appraiser_company}
-                  onChange={(e) => setAppraisalForm({ ...appraisalForm, appraiser_company: e.target.value })}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                />
+              <div className="col-span-2">
+                <label className="block text-xs text-gray-500 mb-1">Select Appraiser</label>
+                <select
+                  value={appraisalForm.appraiser_id}
+                  onChange={(e) => {
+                    const selected = appraisers.find((a) => a.id === e.target.value)
+                    setAppraisalForm({
+                      ...appraisalForm,
+                      appraiser_id: e.target.value,
+                      appraiser_name: selected?.appraiser_name || '',
+                      appraiser_company: selected?.company_name || '',
+                    })
+                  }}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="">— Select an appraiser —</option>
+                  {appraisers.map((a) => (
+                    <option key={a.id} value={a.id}>{a.appraiser_name} — {a.company_name}</option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="block text-xs text-gray-500 mb-1">Appraised Value (USD)</label>
