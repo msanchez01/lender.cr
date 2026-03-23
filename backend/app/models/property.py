@@ -44,6 +44,7 @@ class ApplicationStatus(str, enum.Enum):
     DRAFT = "draft"
     SUBMITTED = "submitted"
     UNDER_REVIEW = "under_review"
+    REQUEST_MORE_INFO = "request_more_info"
     APPRAISAL_ORDERED = "appraisal_ordered"
     APPRAISAL_COMPLETE = "appraisal_complete"
     APPROVED = "approved"

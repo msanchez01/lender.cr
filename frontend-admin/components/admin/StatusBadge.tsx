@@ -9,6 +9,7 @@ const applicationColors: Record<string, string> = {
   draft: 'bg-gray-100 text-gray-700',
   submitted: 'bg-blue-100 text-blue-700',
   under_review: 'bg-yellow-100 text-yellow-700',
+  request_more_info: 'bg-amber-100 text-amber-700',
   appraisal_ordered: 'bg-orange-100 text-orange-700',
   appraisal_complete: 'bg-teal-100 text-teal-700',
   approved: 'bg-green-100 text-green-700',
