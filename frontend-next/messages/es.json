@@ -437,7 +437,12 @@
     "submitting": "Enviando...",
     "editApplication": "Editar",
     "withdrawApplication": "Retirar",
-    "backToApplications": "Volver a Solicitudes"
+    "backToApplications": "Volver a Solicitudes",
+    "rejectionReason": "Motivo de Rechazo",
+    "submittedOn": "Enviada",
+    "approvedOn": "Aprobada",
+    "fundedOn": "Financiada",
+    "createdOn": "Creada"
   },
   "MarketplacePage": {
     "title": "Mercado de Inversión",

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { Link, useRouter } from '@/i18n/navigation'
 import { useParams } from 'next/navigation'
 import { ArrowLeft, FileText, Loader2, Send, XCircle } from 'lucide-react'
@@ -29,6 +29,8 @@ export default function ApplicationDetailPage() {
   const [submitting, setSubmitting] = useState(false)
   const [withdrawing, setWithdrawing] = useState(false)
   const t = useTranslations('ApplicationsPage')
+  const locale = useLocale()
+  const fmtDate = (d: string) => new Date(d).toLocaleDateString(locale === 'es' ? 'es-CR' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })
   const router = useRouter()
 
   useEffect(() => {
@@ -201,7 +203,7 @@ export default function ApplicationDetailPage() {
         {application.rejection_reason && (
           <div className="mt-5 pt-5 border-t border-gray-100">
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-sm font-medium text-red-700">Rejection Reason</p>
+              <p className="text-sm font-medium text-red-700">{t('rejectionReason')}</p>
               <p className="text-sm text-red-600 mt-1">{application.rejection_reason}</p>
             </div>
           </div>
@@ -209,15 +211,15 @@ export default function ApplicationDetailPage() {
 
         <div className="mt-5 pt-5 border-t border-gray-100 flex items-center gap-4 text-xs text-gray-400">
           {application.submitted_at && (
-            <span>Submitted: {new Date(application.submitted_at).toLocaleDateString()}</span>
+            <span>{t('submittedOn')}: {fmtDate(application.submitted_at)}</span>
           )}
           {application.approved_at && (
-            <span>Approved: {new Date(application.approved_at).toLocaleDateString()}</span>
+            <span>{t('approvedOn')}: {fmtDate(application.approved_at)}</span>
           )}
           {application.funded_at && (
-            <span>Funded: {new Date(application.funded_at).toLocaleDateString()}</span>
+            <span>{t('fundedOn')}: {fmtDate(application.funded_at)}</span>
           )}
-          <span>Created: {new Date(application.created_at).toLocaleDateString()}</span>
+          <span>{t('createdOn')}: {fmtDate(application.created_at)}</span>
         </div>
       </div>
     </div>

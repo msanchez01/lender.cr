@@ -437,7 +437,12 @@
     "submitting": "Submitting...",
     "editApplication": "Edit",
     "withdrawApplication": "Withdraw",
-    "backToApplications": "Back to Applications"
+    "backToApplications": "Back to Applications",
+    "rejectionReason": "Rejection Reason",
+    "submittedOn": "Submitted",
+    "approvedOn": "Approved",
+    "fundedOn": "Funded",
+    "createdOn": "Created"
   },
   "MarketplacePage": {
     "title": "Investment Marketplace",
