@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
-import { Upload, X, Loader2, ImageIcon } from 'lucide-react'
+import { Upload, X, Loader2 } from 'lucide-react'
 import { borrowerApi } from '@/lib/api-client'
 import type { PropertyImage } from '@/lib/types'
 
@@ -14,26 +14,62 @@ interface ImageUploaderProps {
 
 export default function ImageUploader({ propertyId, images, onUpload }: ImageUploaderProps) {
   const [uploading, setUploading] = useState(false)
+  const [uploadCount, setUploadCount] = useState(0)
+  const [uploadTotal, setUploadTotal] = useState(0)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [dragOver, setDragOver] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const t = useTranslations('PropertiesPage')
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+  const uploadFiles = useCallback(async (files: File[]) => {
+    const validFiles = files.filter((f) =>
+      ['image/jpeg', 'image/png', 'image/webp'].includes(f.type)
+    )
+    if (validFiles.length === 0) return
 
     setUploading(true)
-    try {
-      await borrowerApi.uploadImage(propertyId, file)
-      onUpload()
-    } catch {
-      // Error handled silently; user sees upload area reset
-    } finally {
-      setUploading(false)
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ''
+    setUploadTotal(validFiles.length)
+    setUploadCount(0)
+
+    for (const file of validFiles) {
+      try {
+        await borrowerApi.uploadImage(propertyId, file)
+        setUploadCount((prev) => prev + 1)
+      } catch {
+        // Skip failed uploads, continue with the rest
       }
     }
+
+    onUpload()
+    setUploading(false)
+    setUploadTotal(0)
+    setUploadCount(0)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }, [propertyId, onUpload])
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    if (files.length > 0) uploadFiles(files)
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragOver(false)
+    const files = Array.from(e.dataTransfer.files)
+    if (files.length > 0) uploadFiles(files)
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragOver(true)
+  }
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragOver(false)
   }
 
   const handleDelete = async (imageId: string) => {
@@ -86,19 +122,26 @@ export default function ImageUploader({ propertyId, images, onUpload }: ImageUpl
         ref={fileInputRef}
         type="file"
         accept="image/jpeg,image/png,image/webp"
+        multiple
         onChange={handleFileSelect}
         className="hidden"
       />
 
-      <button
-        onClick={() => fileInputRef.current?.click()}
-        disabled={uploading}
-        className="w-full flex flex-col items-center justify-center gap-2 py-6 border-2 border-dashed border-gray-200 rounded-lg text-sm text-gray-500 hover:border-primary-300 hover:text-primary-600 transition-colors"
+      <div
+        onClick={() => !uploading && fileInputRef.current?.click()}
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        className={`w-full flex flex-col items-center justify-center gap-2 py-6 border-2 border-dashed rounded-lg text-sm cursor-pointer transition-colors ${
+          dragOver
+            ? 'border-primary-400 bg-primary-50 text-primary-600'
+            : 'border-gray-200 text-gray-500 hover:border-primary-300 hover:text-primary-600'
+        }`}
       >
         {uploading ? (
           <>
             <Loader2 className="h-6 w-6 animate-spin text-primary-500" />
-            <span>{t('saving')}</span>
+            <span>{uploadCount} / {uploadTotal}</span>
           </>
         ) : (
           <>
@@ -107,7 +150,7 @@ export default function ImageUploader({ propertyId, images, onUpload }: ImageUpl
             <span className="text-xs text-gray-400">{t('imageTypes')}</span>
           </>
         )}
-      </button>
+      </div>
     </div>
   )
 }
