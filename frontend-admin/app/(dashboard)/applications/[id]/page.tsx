@@ -65,7 +65,15 @@ export default function ApplicationDetailPage() {
 
   async function handleSaveNotes() {
     setSaving(true)
-    await updateStatus(id, { status: app!.status, admin_notes: adminNotes })
+    const timestamp = new Date().toLocaleString()
+    const newNote = `[${timestamp} — Admin] ${adminNotes}`
+    const existing = app?.admin_notes || ''
+    const combined = existing ? `${newNote}\n---\n${existing}` : newNote
+    const ok = await updateStatus(id, { status: app!.status, admin_notes: combined })
+    if (ok) {
+      await load()
+      setAdminNotes('')
+    }
     setSaving(false)
   }
 
@@ -177,20 +185,30 @@ export default function ApplicationDetailPage() {
       {/* Admin Notes */}
       <div className="bg-white rounded-xl border border-gray-200 p-5">
         <h2 className="text-lg font-semibold text-gray-900 mb-3">Admin Notes</h2>
-        <textarea
-          value={adminNotes}
-          onChange={(e) => setAdminNotes(e.target.value)}
-          rows={3}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 mb-2"
-          placeholder="Internal notes..."
-        />
-        <button
-          onClick={handleSaveNotes}
-          disabled={saving}
-          className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-50"
-        >
-          Save Notes
-        </button>
+
+        {app.admin_notes && (
+          <div className="mb-4 p-3 bg-gray-50 rounded-lg text-sm text-gray-700 whitespace-pre-wrap max-h-48 overflow-y-auto border border-gray-100">
+            {app.admin_notes}
+          </div>
+        )}
+
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={adminNotes}
+            onChange={(e) => setAdminNotes(e.target.value)}
+            className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+            placeholder="Add a note..."
+            onKeyDown={(e) => { if (e.key === 'Enter' && adminNotes.trim()) handleSaveNotes() }}
+          />
+          <button
+            onClick={handleSaveNotes}
+            disabled={saving || !adminNotes.trim()}
+            className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-50"
+          >
+            {saving ? 'Saving...' : 'Add Note'}
+          </button>
+        </div>
       </div>
 
       {/* Borrower Info */}
