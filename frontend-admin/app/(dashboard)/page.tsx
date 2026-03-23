@@ -106,7 +106,7 @@ export default function DashboardPage() {
                       </Link>
                     </td>
                     <td className="py-2 text-gray-700">{app.borrower_name}</td>
-                    <td className="py-2 text-gray-700">{fmt.format(app.loan_amount_usd)}</td>
+                    <td className="py-2 text-gray-700">{fmt.format(app.amount_requested)}</td>
                     <td className="py-2">
                       <StatusBadge status={app.status} type="application" />
                     </td>

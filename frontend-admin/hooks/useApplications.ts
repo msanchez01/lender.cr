@@ -8,10 +8,11 @@ export interface Application {
   borrower_email: string
   borrower_phone: string
   borrower_kyc_verified: boolean
-  loan_amount_usd: number
-  loan_term_months: number
-  loan_purpose: string
-  ltv_ratio: number
+  amount_requested: number
+  preliminary_ltv: number | null
+  final_ltv: number | null
+  preferred_term_months: number
+  purpose: string
   status: string
   admin_notes: string | null
   rejection_reason: string | null

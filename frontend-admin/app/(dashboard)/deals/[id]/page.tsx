@@ -161,10 +161,10 @@ export default function AdminDealDetailPage() {
             <p className="text-gray-500">Outstanding</p>
             <p className="font-semibold text-gray-900">{fmt.format(deal.outstanding_principal)}</p>
           </div>
-          {deal.ltv_ratio != null && (
+          {deal.ltv_at_origination != null && (
             <div>
               <p className="text-gray-500">LTV</p>
-              <p className="font-medium text-gray-900">{deal.ltv_ratio}%</p>
+              <p className="font-medium text-gray-900">{Number(deal.ltv_at_origination).toFixed(1)}%</p>
             </div>
           )}
           {deal.notary_date && (

@@ -130,8 +130,8 @@ export default function ApplicationsPage() {
                   >
                     <td className="px-4 py-3 text-primary-600 font-medium">{app.application_number}</td>
                     <td className="px-4 py-3 text-gray-700">{app.borrower_name}</td>
-                    <td className="px-4 py-3 text-gray-700">{fmt.format(app.loan_amount_usd)}</td>
-                    <td className="px-4 py-3 text-gray-700">{app.ltv_ratio}%</td>
+                    <td className="px-4 py-3 text-gray-700">{fmt.format(app.amount_requested)}</td>
+                    <td className="px-4 py-3 text-gray-700">{app.preliminary_ltv}%</td>
                     <td className="px-4 py-3">
                       <StatusBadge status={app.status} type="application" />
                     </td>

@@ -8,12 +8,11 @@ import StatusBadge from '@/components/admin/StatusBadge'
 
 const fmt = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
 
-const statusTransitions: Record<string, string[]> = {
-  submitted: ['under_review'],
-  under_review: ['appraisal_ordered'],
-  appraisal_complete: ['approved', 'rejected'],
-  approved: ['matching'],
-}
+const ALL_STATUSES = [
+  'draft', 'submitted', 'under_review', 'request_more_info',
+  'appraisal_ordered', 'appraisal_complete',
+  'approved', 'rejected', 'withdrawn', 'matching', 'funded', 'expired',
+]
 
 export default function ApplicationDetailPage() {
   const params = useParams()
@@ -100,7 +99,7 @@ export default function ApplicationDetailPage() {
     return <div className="flex items-center justify-center h-64 text-gray-400">Application not found.</div>
   }
 
-  const transitions = statusTransitions[app.status] || []
+  const availableStatuses = ALL_STATUSES.filter((s) => s !== app.status)
 
   return (
     <div className="space-y-6 max-w-5xl">
@@ -119,65 +118,61 @@ export default function ApplicationDetailPage() {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
           <div>
             <p className="text-gray-500">Amount</p>
-            <p className="font-medium text-gray-900">{fmt.format(app.loan_amount_usd)}</p>
+            <p className="font-medium text-gray-900">{fmt.format(app.amount_requested)}</p>
           </div>
           <div>
             <p className="text-gray-500">Term</p>
-            <p className="font-medium text-gray-900">{app.loan_term_months} months</p>
+            <p className="font-medium text-gray-900">{app.preferred_term_months} months</p>
           </div>
           <div>
             <p className="text-gray-500">Purpose</p>
-            <p className="font-medium text-gray-900">{app.loan_purpose}</p>
+            <p className="font-medium text-gray-900">{app.purpose}</p>
           </div>
           <div>
             <p className="text-gray-500">LTV</p>
-            <p className="font-medium text-gray-900">{app.ltv_ratio}%</p>
+            <p className="font-medium text-gray-900">{app.preliminary_ltv != null ? `${Number(app.preliminary_ltv).toFixed(1)}%` : '—'}</p>
           </div>
           <div>
             <p className="text-gray-500">Created</p>
-            <p className="font-medium text-gray-900">{new Date(app.created_at).toLocaleDateString()}</p>
+            <p className="font-medium text-gray-900">{app.created_at ? new Date(app.created_at).toLocaleDateString() : '—'}</p>
           </div>
           <div>
-            <p className="text-gray-500">Updated</p>
-            <p className="font-medium text-gray-900">{new Date(app.updated_at).toLocaleDateString()}</p>
+            <p className="text-gray-500">Submitted</p>
+            <p className="font-medium text-gray-900">{app.submitted_at ? new Date(app.submitted_at).toLocaleDateString() : '—'}</p>
           </div>
         </div>
       </div>
 
       {/* Status Actions */}
-      {transitions.length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <h2 className="text-lg font-semibold text-gray-900 mb-3">Status Actions</h2>
-          {transitions.includes('rejected') && (
-            <div className="mb-3">
-              <label className="block text-sm text-gray-500 mb-1">Rejection Reason (if rejecting)</label>
-              <input
-                type="text"
-                value={rejectionReason}
-                onChange={(e) => setRejectionReason(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                placeholder="Reason for rejection..."
-              />
-            </div>
-          )}
-          <div className="flex flex-wrap gap-2">
-            {transitions.map((status) => (
-              <button
-                key={status}
-                disabled={saving}
-                onClick={() => handleStatusChange(status)}
-                className={`rounded-lg px-4 py-2 text-sm font-medium text-white disabled:opacity-50 ${
-                  status === 'rejected'
-                    ? 'bg-red-600 hover:bg-red-700'
-                    : 'bg-primary-600 hover:bg-primary-700'
-                }`}
-              >
-                {status.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
-              </button>
-            ))}
-          </div>
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <h2 className="text-lg font-semibold text-gray-900 mb-3">Change Status</h2>
+        <div className="mb-3">
+          <label className="block text-sm text-gray-500 mb-1">Rejection Reason (if rejecting)</label>
+          <input
+            type="text"
+            value={rejectionReason}
+            onChange={(e) => setRejectionReason(e.target.value)}
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+            placeholder="Reason for rejection..."
+          />
         </div>
-      )}
+        <div className="flex items-center gap-3">
+          <select
+            value=""
+            onChange={(e) => { if (e.target.value) handleStatusChange(e.target.value) }}
+            disabled={saving}
+            className="rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+          >
+            <option value="">— Change to —</option>
+            {availableStatuses.map((s) => (
+              <option key={s} value={s}>
+                {s.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
+              </option>
+            ))}
+          </select>
+          {saving && <Loader2 className="h-4 w-4 animate-spin text-primary-500" />}
+        </div>
+      </div>
 
       {/* Admin Notes */}
       <div className="bg-white rounded-xl border border-gray-200 p-5">

@@ -12,15 +12,15 @@ interface Application {
   id: string
   application_number: string
   borrower_name: string
-  loan_amount_usd: number
-  loan_term_months: number
+  amount_requested: number
+  preferred_term_months: number
 }
 
 interface Interest {
   id: string
   investor_name: string
-  amount_willing_usd: number
-  proposed_rate: number
+  amount_willing: number | null
+  proposed_rate_monthly: number | null
 }
 
 export default function AdminCreateDealPage() {
@@ -73,8 +73,8 @@ export default function AdminCreateDealPage() {
   )
 
   // Preview calculations
-  const principal = selectedApp?.loan_amount_usd || 0
-  const termMonths = selectedApp?.loan_term_months || 12
+  const principal = selectedApp?.amount_requested || 0
+  const termMonths = selectedApp?.preferred_term_months || 12
   const monthlyRate = form.interest_rate_monthly / 100
 
   const monthlyPayment = useMemo(() => {
@@ -153,7 +153,7 @@ export default function AdminCreateDealPage() {
             <option value="">-- Select an approved application --</option>
             {applications.map((app) => (
               <option key={app.id} value={app.id}>
-                #{app.application_number} - {app.borrower_name} - {fmt.format(app.loan_amount_usd)}
+                #{app.application_number} - {app.borrower_name} - {fmt.format(app.amount_requested)}
               </option>
             ))}
           </select>
