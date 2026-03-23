@@ -5,7 +5,9 @@ import { useTranslations, useLocale } from 'next-intl'
 import { useSearchParams } from 'next/navigation'
 import { Link, useRouter } from '@/i18n/navigation'
 import { UserPlus, Loader2, AlertCircle } from 'lucide-react'
+import { PhoneInput } from 'react-international-phone'
 import { useAuth } from '@/lib/auth'
+import 'react-international-phone/style.css'
 
 export default function RegisterPage() {
   return (
@@ -21,6 +23,7 @@ function RegisterForm() {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [role, setRole] = useState<'borrower' | 'investor'>(defaultRole)
@@ -40,14 +43,23 @@ function RegisterForm() {
       return
     }
 
+    // Phone required for borrowers
+    const phoneDigits = phone.replace(/\D/g, '')
+    if (role === 'borrower' && phoneDigits.length < 8) {
+      setError(t('phoneRequired'))
+      return
+    }
+
     setLoading(true)
 
     try {
+      const phoneValue = phone.replace(/\D/g, '').length >= 8 ? phone : undefined
       const user = await register({
         email,
         password,
         first_name: firstName,
         last_name: lastName,
+        phone: phoneValue,
         role,
         preferred_language: locale,
       })
@@ -135,6 +147,18 @@ function RegisterForm() {
               className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
+
+          {role === 'borrower' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('phoneLabel')} *</label>
+              <PhoneInput
+                defaultCountry="cr"
+                value={phone}
+                onChange={setPhone}
+                inputClassName="!w-full !px-3 !py-2.5 !border-gray-200 !rounded-lg !text-sm focus:!outline-none focus:!ring-2 focus:!ring-primary-500"
+              />
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('passwordLabel')}</label>

@@ -71,6 +71,7 @@ async def register(request: Request, data: RegisterRequest, db: Session = Depend
         status=UserStatus.ACTIVE,
         first_name=data.first_name,
         last_name=data.last_name,
+        phone=data.phone,
         preferred_language=data.preferred_language,
     )
     db.add(user)
