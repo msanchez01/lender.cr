@@ -217,20 +217,20 @@ export default function ApplicationDetailPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
           <div>
             <p className="text-gray-500">Name</p>
-            <p className="font-medium text-gray-900">{app.borrower_name}</p>
+            <p className="font-medium text-gray-900">{app.borrower?.name || app.borrower_name || '—'}</p>
           </div>
           <div>
             <p className="text-gray-500">Email</p>
-            <p className="font-medium text-gray-900">{app.borrower_email}</p>
+            <p className="font-medium text-gray-900">{app.borrower?.email || app.borrower_email || '—'}</p>
           </div>
           <div>
             <p className="text-gray-500">Phone</p>
-            <p className="font-medium text-gray-900">{app.borrower_phone || 'N/A'}</p>
+            <p className="font-medium text-gray-900">{app.borrower?.phone || app.borrower_phone || 'N/A'}</p>
           </div>
           <div>
             <p className="text-gray-500">KYC</p>
             <p className="font-medium">
-              {app.borrower_kyc_verified ? (
+              {(app.borrower?.kyc_verified || app.borrower_kyc_verified) ? (
                 <span className="inline-flex items-center gap-1 text-green-600">
                   <CheckCircle className="h-4 w-4" /> Verified
                 </span>
