@@ -1,18 +1,29 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
+import { useSearchParams } from 'next/navigation'
 import { Link, useRouter } from '@/i18n/navigation'
 import { UserPlus, Loader2, AlertCircle } from 'lucide-react'
 import { useAuth } from '@/lib/auth'
 
 export default function RegisterPage() {
+  return (
+    <Suspense>
+      <RegisterForm />
+    </Suspense>
+  )
+}
+
+function RegisterForm() {
+  const searchParams = useSearchParams()
+  const defaultRole = searchParams.get('role') === 'investor' ? 'investor' : 'borrower'
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [role, setRole] = useState<'borrower' | 'investor'>('borrower')
+  const [role, setRole] = useState<'borrower' | 'investor'>(defaultRole)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const t = useTranslations('AuthPage')

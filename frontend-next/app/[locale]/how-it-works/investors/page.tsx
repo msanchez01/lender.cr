@@ -95,7 +95,7 @@ export default async function InvestorsHowItWorks({ params }: Props) {
       <div className="bg-gradient-to-br from-gold-500 to-gold-700 rounded-xl text-white p-8 text-center">
         <h2 className="text-2xl font-bold mb-3">{t('readyToStart')}</h2>
         <Link
-          href="/contact"
+          href="/auth/register?role=investor"
           className="inline-flex items-center gap-2 bg-white text-gold-700 hover:bg-gray-100 font-semibold px-6 py-3 rounded-lg transition-colors"
         >
           {t('investorCta')}

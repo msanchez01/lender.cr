@@ -96,7 +96,7 @@ export default async function BorrowersHowItWorks({ params }: Props) {
       <div className="bg-gradient-to-br from-primary-600 to-primary-800 rounded-xl text-white p-8 text-center">
         <h2 className="text-2xl font-bold mb-3">{t('readyToStart')}</h2>
         <Link
-          href="/contact"
+          href="/auth/register"
           className="inline-flex items-center gap-2 bg-gold-500 hover:bg-gold-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
         >
           {t('borrowerCta')}

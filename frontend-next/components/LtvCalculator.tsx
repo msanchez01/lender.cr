@@ -123,7 +123,7 @@ export default function LtvCalculator({ compact = false }: { compact?: boolean }
             {!compact && tier.tier !== 'not_qualified' && (
               <div className="pt-2">
                 <Link
-                  href="/contact"
+                  href="/auth/register"
                   className="w-full flex items-center justify-center gap-2 bg-gold-500 hover:bg-gold-600 text-white font-medium py-2.5 rounded-lg transition-colors text-sm"
                 >
                   {t('ctaButton')}

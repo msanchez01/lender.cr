@@ -152,14 +152,14 @@ export default async function LocationLendingPage({ params }: Props) {
       {/* CTAs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Link
-          href="/contact"
+          href="/auth/register"
           className="flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-semibold px-6 py-4 rounded-xl transition-colors"
         >
           {t('borrowerCta', { location: name })}
           <ArrowRight className="h-4 w-4" />
         </Link>
         <Link
-          href="/contact"
+          href="/auth/register?role=investor"
           className="flex items-center justify-center gap-2 bg-gold-500 hover:bg-gold-600 text-white font-semibold px-6 py-4 rounded-xl transition-colors"
         >
           {t('investorCta')}

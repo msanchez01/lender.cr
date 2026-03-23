@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { Save, Loader2, CheckCircle, Settings2 } from 'lucide-react'
+import { Save, Loader2, CheckCircle, Settings2, Info } from 'lucide-react'
 import { useAuth, getAccessToken } from '@/lib/auth'
 import api from '@/lib/api-client'
 
@@ -86,6 +86,23 @@ export default function InvestorSettings() {
 
   const inputClass = 'w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500'
 
+  function FieldLabel({ text, tooltip }: { text: string; tooltip?: string }) {
+    return (
+      <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
+        {text}
+        {tooltip && (
+          <span className="relative group">
+            <Info className="h-3.5 w-3.5 text-gray-400 cursor-help" />
+            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg w-56 text-center opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 pointer-events-none">
+              {tooltip}
+              <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
+            </span>
+          </span>
+        )}
+      </label>
+    )
+  }
+
   return (
     <div className="max-w-2xl">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">{t('pageTitle')}</h1>
@@ -132,7 +149,7 @@ export default function InvestorSettings() {
         <form onSubmit={handleSavePreferences} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('minInvestmentUsd')}</label>
+              <FieldLabel text={t('minInvestmentUsd')} tooltip={t('minInvestmentTooltip')} />
               <input
                 type="number"
                 min="0"
@@ -144,7 +161,7 @@ export default function InvestorSettings() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('maxInvestmentUsd')}</label>
+              <FieldLabel text={t('maxInvestmentUsd')} tooltip={t('maxInvestmentTooltip')} />
               <input
                 type="number"
                 min="0"
@@ -158,7 +175,7 @@ export default function InvestorSettings() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('preferredLtvMax')}</label>
+            <FieldLabel text={t('preferredLtvMax')} tooltip={t('preferredLtvTooltip')} />
             <input
               type="number"
               min="0"
@@ -173,7 +190,7 @@ export default function InvestorSettings() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('preferredTermMin')}</label>
+              <FieldLabel text={t('preferredTermMin')} tooltip={t('preferredTermMinTooltip')} />
               <input
                 type="number"
                 min="1"
@@ -185,7 +202,7 @@ export default function InvestorSettings() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('preferredTermMax')}</label>
+              <FieldLabel text={t('preferredTermMax')} tooltip={t('preferredTermMaxTooltip')} />
               <input
                 type="number"
                 min="1"
@@ -199,7 +216,7 @@ export default function InvestorSettings() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('preferredRegions')}</label>
+            <FieldLabel text={t('preferredRegions')} tooltip={t('preferredRegionsTooltip')} />
             <input
               type="text"
               value={preferredRegions}
@@ -211,17 +228,31 @@ export default function InvestorSettings() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('taxCountry')}</label>
-              <input
-                type="text"
+              <FieldLabel text={t('taxCountry')} tooltip={t('taxCountryTooltip')} />
+              <select
                 value={taxCountry}
                 onChange={(e) => setTaxCountry(e.target.value)}
-                placeholder="Costa Rica"
                 className={inputClass}
-              />
+              >
+                <option value="">—</option>
+                <option value="Costa Rica">Costa Rica</option>
+                <option value="United States">United States</option>
+                <option value="Canada">Canada</option>
+                <option value="Mexico">México</option>
+                <option value="Panama">Panamá</option>
+                <option value="Colombia">Colombia</option>
+                <option value="United Kingdom">United Kingdom</option>
+                <option value="Germany">Germany</option>
+                <option value="France">France</option>
+                <option value="Spain">España</option>
+                <option value="Switzerland">Switzerland</option>
+                <option value="Netherlands">Netherlands</option>
+                <option value="Italy">Italy</option>
+                <option value="Other">Other</option>
+              </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('taxId')}</label>
+              <FieldLabel text={t('taxId')} tooltip={t('taxIdTooltip')} />
               <input
                 type="text"
                 value={taxId}

@@ -107,14 +107,14 @@ export default async function AboutPage({ params }: Props) {
         <p className="text-primary-100 mb-6">{t('ctaDescription')}</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
-            href="/contact"
+            href="/auth/register"
             className="inline-flex items-center justify-center gap-2 bg-gold-500 hover:bg-gold-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
           >
             {t('ctaBorrower')}
             <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
-            href="/contact"
+            href="/auth/register?role=investor"
             className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3 rounded-lg border border-white/20 transition-colors"
           >
             {t('ctaInvestor')}

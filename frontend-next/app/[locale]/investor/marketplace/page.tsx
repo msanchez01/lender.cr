@@ -2,10 +2,27 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
-import { Store, Loader2, Search } from 'lucide-react'
+import { Store, Loader2, Search, Info } from 'lucide-react'
 import { investorApi } from '@/lib/api-client'
 import type { MarketplaceDeal } from '@/lib/types'
 import DealCard from '@/components/investor/DealCard'
+
+function FilterLabel({ text, tooltip }: { text: string; tooltip?: string }) {
+  return (
+    <label className="flex items-center gap-1 text-xs text-gray-500 mb-1">
+      {text}
+      {tooltip && (
+        <span className="relative group">
+          <Info className="h-3 w-3 text-gray-400 cursor-help" />
+          <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg w-52 text-center opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 pointer-events-none">
+            {tooltip}
+            <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
+          </span>
+        </span>
+      )}
+    </label>
+  )
+}
 
 export default function MarketplacePage() {
   const t = useTranslations('MarketplacePage')
@@ -59,7 +76,7 @@ export default function MarketplacePage() {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           <div>
-            <label className="block text-xs text-gray-500 mb-1">{t('minAmount')}</label>
+            <FilterLabel text={t('minAmount')} tooltip={t('minAmountTooltip')} />
             <input
               type="number"
               min="0"
@@ -71,7 +88,7 @@ export default function MarketplacePage() {
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">{t('maxAmount')}</label>
+            <FilterLabel text={t('maxAmount')} tooltip={t('maxAmountTooltip')} />
             <input
               type="number"
               min="0"
@@ -83,7 +100,7 @@ export default function MarketplacePage() {
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">{t('maxLtv')}</label>
+            <FilterLabel text={t('maxLtv')} tooltip={t('maxLtvTooltip')} />
             <input
               type="number"
               min="0"
@@ -96,7 +113,7 @@ export default function MarketplacePage() {
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">{t('propertyType')}</label>
+            <FilterLabel text={t('propertyType')} tooltip={t('propertyTypeTooltip')} />
             <select
               value={propertyType}
               onChange={(e) => setPropertyType(e.target.value)}
@@ -111,7 +128,7 @@ export default function MarketplacePage() {
             </select>
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">{t('province')}</label>
+            <FilterLabel text={t('province')} tooltip={t('provinceTooltip')} />
             <input
               type="text"
               value={province}
