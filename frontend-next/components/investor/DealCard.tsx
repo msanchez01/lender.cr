@@ -65,7 +65,7 @@ export default function DealCard({ deal }: DealCardProps) {
         <div className="flex items-center gap-3 text-xs text-gray-500">
           {ltv != null && (
             <span className="bg-gray-100 px-2 py-0.5 rounded">
-              LTV {ltv.toFixed(1)}%
+              LTV {Number(ltv).toFixed(1)}%
             </span>
           )}
           <span className="bg-gray-100 px-2 py-0.5 rounded">

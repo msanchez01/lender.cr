@@ -210,7 +210,7 @@ export default function DealDetailPage() {
                   <Target className="h-4 w-4 text-gray-400" />
                   <div>
                     <p className="text-xs text-gray-500">LTV</p>
-                    <p className="text-sm font-medium text-gray-900">{ltv.toFixed(1)}%</p>
+                    <p className="text-sm font-medium text-gray-900">{Number(ltv).toFixed(1)}%</p>
                   </div>
                 </div>
               )}

@@ -178,7 +178,7 @@ export default function ApplicationDetailPage() {
             <div>
               <p className="text-xs text-gray-500 mb-0.5">{t('preliminaryLtv')}</p>
               <p className="text-lg font-semibold text-gray-900">
-                {application.preliminary_ltv.toFixed(1)}%
+                {Number(application.preliminary_ltv).toFixed(1)}%
               </p>
             </div>
           )}

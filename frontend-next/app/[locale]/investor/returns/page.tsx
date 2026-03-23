@@ -62,7 +62,7 @@ export default function ReturnsPage() {
     },
     {
       label: t('avgAnnualReturn'),
-      value: `${summary.avg_annual_return.toFixed(1)}%`,
+      value: `${Number(summary.avg_annual_return).toFixed(1)}%`,
       icon: Percent,
       color: 'text-primary-600',
     },

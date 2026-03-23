@@ -79,7 +79,7 @@ export default function ApplicationCard({ application }: ApplicationCardProps) {
           <div>
             <p className="text-xs text-gray-500">{t('ltv')}</p>
             <p className="font-medium text-gray-700">
-              {application.preliminary_ltv.toFixed(1)}%
+              {Number(application.preliminary_ltv).toFixed(1)}%
             </p>
           </div>
         )}
